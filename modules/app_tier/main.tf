@@ -126,11 +126,7 @@ resource "aws_security_group" "app_security_group" {
   }
 }
 
-
-
-    ## INSTANCE
-
-
+  ## INSTANCE
 
       ## AUTO SCALING GROUP
 data "template_file" "app_user_data" {
@@ -142,25 +138,15 @@ data "template_file" "app_user_data" {
 
 data "template_cloudinit_config" "master" {
   base64_encode = true
-
   # get common user_data
   part {
     filename     = "common.cfg"
     content_type = "text/part-handler"
     content      = "${data.template_file.app_user_data.rendered}"
   }
-
 }
 
-resource "aws_launch_template" "app_launch_template" {
-  name = "Project4-launch-manvir"
-  image_id = "ami-c2b8bfbb"
-  instance_type = "t2.micro"
-  user_data = "${data.template_cloudinit_config.master.rendered}"
-  network_interfaces {
-    security_groups = ["${aws_security_group.app_security_group.id}"]
-  }
-}
+
 
 resource "aws_autoscaling_group" "app_auto_scaling" {
   load_balancers = ["${aws_elb.elb_app.id}"]
@@ -168,9 +154,7 @@ resource "aws_autoscaling_group" "app_auto_scaling" {
   max_size = 4
   min_size = 3
   vpc_zone_identifier = ["${aws_subnet.app_subnet_1a.id}","${aws_subnet.app_subnet_1b.id}","${aws_subnet.app_subnet_1c.id}"]
-  launch_template = {
-    id = "${aws_launch_template.app_launch_template.id}"
-  }
+  
 }
 
     ## ELB
