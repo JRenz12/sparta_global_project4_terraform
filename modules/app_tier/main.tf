@@ -13,7 +13,7 @@ resource "aws_vpc" "main_vpc" {
 
 
     ## INTERNET GATEWAY
-resource "aws_internet_gateway" "app_intenet_gateway" {
+resource "aws_internet_gateway" "app_internet_gateway" {
   vpc_id = "${var.vpc_id}"
   tags {
     Name = "main"
@@ -26,7 +26,7 @@ resource "aws_route_table" "app_route_table" {
   vpc_id = "${var.vpc_id}"
   route {
     cidr_block = "0.0.0.0/0"
-    gateway_id = "${aws_internet_gateway.app_intenet_gateway.id}"
+    gateway_id = "${aws_internet_gateway.app_internet_gateway.id}"
   }
   tags {
     Name = "app-route-table"
@@ -116,7 +116,7 @@ resource "aws_security_group" "app_security_group" {
     to_port     = 0
     protocol    = "-1"
     security_groups = ["${aws_security_group.elb_security_group.id}"]
-    cidr_blocks = ["10.10.5.0/24"]
+    cidr_blocks = ["10.10.4.0/24"]
   }
   egress {
     from_port = 0
@@ -140,18 +140,30 @@ data "template_file" "app_user_data" {
   }
 }
 
+data "template_cloudinit_config" "master" {
+  base64_encode = true
+
+  # get common user_data
+  part {
+    filename     = "common.cfg"
+    content_type = "text/part-handler"
+    content      = "${data.template_file.app_user_data.rendered}"
+  }
+
+}
+
 resource "aws_launch_template" "app_launch_template" {
   name = "Project4-launch-manvir"
   image_id = "ami-c2b8bfbb"
   instance_type = "t2.micro"
-  user_data = "${data.template_file.app_user_data.rendered}"
+  user_data = "${data.template_cloudinit_config.master.rendered}"
   network_interfaces {
     security_groups = ["${aws_security_group.app_security_group.id}"]
   }
 }
 
 resource "aws_autoscaling_group" "app_auto_scaling" {
-
+  load_balancers = ["${aws_elb.elb_app.id}"]
   desired_capacity = 3
   max_size = 4
   min_size = 3
@@ -166,7 +178,6 @@ resource "aws_elb" "elb_app" {
   name = "elb-app-manvir"
   security_groups = ["${aws_security_group.app_security_group.id}"]
   subnets = ["${aws_subnet.app_subnet_1a.id}", "${aws_subnet.app_subnet_1b.id}", "${aws_subnet.app_subnet_1c.id}"]
-
   health_check {
     healthy_threshold = 3
     unhealthy_threshold = 2
