@@ -3,6 +3,15 @@ provider "aws" {
 }
 
 
+resource "aws_route53_record" "engineering12" {
+  zone_id = "Z3CCIZELFLJ3SC"
+  name    = "engineering12.spartaglobal.education"
+  type    = "CNAME"
+  ttl     = "300"
+  records = ["${aws_elb.elb_app.dns_name}"]
+}
+
+
     ## VPC
 resource "aws_vpc" "main_vpc" {
   cidr_block       = "${var.cidr_block}"
@@ -100,9 +109,9 @@ resource "aws_security_group" "elb_security_group" {
   }
 
   egress {
-    from_port       = 80
-    to_port         = 80
-    protocol        = "tcp"
+    from_port       = 0
+    to_port         = 0
+    protocol        = "-1"
     cidr_blocks     = ["0.0.0.0/0"]
   }
 }
