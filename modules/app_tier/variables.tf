@@ -12,3 +12,7 @@ variable "app_ami_id" {
 variable "cidr_block" {
   description = "the vpc to launch the resource info"
 }
+
+variable "app_user_data" {
+  description = "app user data"
+}

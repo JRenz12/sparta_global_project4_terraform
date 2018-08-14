@@ -1,6 +1,1 @@
-#!/bin/bash
-export LC_ALL=c
-cd /home/ubuntu/app
-npm install
-export DB_HOST=${db_host}
-pm2 start app.js
+IyEvYmluL2Jhc2gNCmV4cG9ydCBMQ19BTEw9Yw0KY2QgL2hvbWUvdWJ1bnR1L2FwcA0KbnBtIGluc3RhbGwNCg0KcG0yIHN0YXJ0IGFwcC5qcw0K

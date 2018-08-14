@@ -33,7 +33,7 @@ resource "aws_route_table" "app_route_table" {
   }
 }
 
-resource "aws_route_table_association" "elg_association" {
+resource "aws_route_table_association" "elb_association" {
   subnet_id      = "${aws_subnet.elb_subnet.id}"
   route_table_id = "${aws_route_table.app_route_table.id}"
 }
@@ -83,6 +83,7 @@ resource "aws_subnet" "elb_subnet" {
 
 
 
+
     ## SECURITY GROUPS
 
 #elb-security-group
@@ -116,7 +117,7 @@ resource "aws_security_group" "app_security_group" {
     to_port     = 0
     protocol    = "-1"
     security_groups = ["${aws_security_group.elb_security_group.id}"]
-    cidr_blocks = ["10.10.4.0/24"]
+    cidr_blocks = ["0.0.0.0/0"]
   }
   egress {
     from_port = 0
@@ -129,24 +130,16 @@ resource "aws_security_group" "app_security_group" {
   ## INSTANCE
 
       ## AUTO SCALING GROUP
-data "template_file" "app_user_data" {
-  template = "${file("${path.cwd}/templates/app/user_data.sh.tpl")}"
-  vars {
-    db_host = "mongodb://10.10.4.0/24:27017/posts"
+
+resource "aws_launch_template" "applaunch_template" {
+  name = "Project4-launch-manvir"
+  image_id = "ami-c2b8bfbb"
+  instance_type = "t2.micro"
+  user_data = "${var.app_user_data}"
+  network_interfaces {
+    security_groups = ["${aws_security_group.app_security_group.id}"]
   }
 }
-
-data "template_cloudinit_config" "master" {
-  base64_encode = true
-  # get common user_data
-  part {
-    filename     = "common.cfg"
-    content_type = "text/part-handler"
-    content      = "${data.template_file.app_user_data.rendered}"
-  }
-}
-
-
 
 resource "aws_autoscaling_group" "app_auto_scaling" {
   load_balancers = ["${aws_elb.elb_app.id}"]
@@ -154,7 +147,9 @@ resource "aws_autoscaling_group" "app_auto_scaling" {
   max_size = 4
   min_size = 3
   vpc_zone_identifier = ["${aws_subnet.app_subnet_1a.id}","${aws_subnet.app_subnet_1b.id}","${aws_subnet.app_subnet_1c.id}"]
-  
+  launch_template = {
+    id = "${aws_launch_template.applaunch_template.id}"
+  }
 }
 
     ## ELB
@@ -171,8 +166,8 @@ resource "aws_elb" "elb_app" {
   }
     listener {
       lb_port = 80
-      lb_protocol = "http"
+      lb_protocol = "tcp"
       instance_port = "80"
-      instance_protocol = "http"
+      instance_protocol = "tcp"
     }
 }
