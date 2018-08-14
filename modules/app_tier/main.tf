@@ -53,8 +53,14 @@ resource "aws_route_table_association" "elb_association" {
 #1a
 resource "aws_subnet" "app_subnet_1a" {
   vpc_id     = "${var.vpc_id}"
+<<<<<<< HEAD
   cidr_block = "10.10.1.0/24"
   availability_zone = "eu-west-1a"
+=======
+  cidr_block = "10.10.0.0/24"
+  availability_zone = "${data.aws_availability_zones.available.names[0]}"
+
+>>>>>>> 258fa0efadeb9a6af2fcf3fb115fe975016da155
   tags {
     Name = "subnet-app-1a"
   }
@@ -63,18 +69,30 @@ resource "aws_subnet" "app_subnet_1a" {
 #1b
 resource "aws_subnet" "app_subnet_1b" {
   vpc_id     = "${var.vpc_id}"
+<<<<<<< HEAD
   cidr_block = "10.10.2.0/24"
   availability_zone = "eu-west-1b"
   tags {
     Name = "subnet-app-1b"
+=======
+  cidr_block = "10.10.1.0/24"
+  availability_zone = "${data.aws_availability_zones.available.names[1]}"
+  tags {
+    Name = "subnet-app-project4"
+>>>>>>> 258fa0efadeb9a6af2fcf3fb115fe975016da155
   }
 }
 
 #1c
 resource "aws_subnet" "app_subnet_1c" {
   vpc_id     = "${var.vpc_id}"
+<<<<<<< HEAD
   cidr_block = "10.10.3.0/24"
   availability_zone = "eu-west-1c"
+=======
+  cidr_block = "10.10.2.0/24"
+  availability_zone = "${data.aws_availability_zones.available.names[2]}"
+>>>>>>> 258fa0efadeb9a6af2fcf3fb115fe975016da155
   tags {
     Name = "subnet-app-1c"
   }
@@ -91,38 +109,22 @@ resource "aws_subnet" "elb_subnet" {
 }
 
 
-
-
-    ## SECURITY GROUPS
-
-#elb-security-group
-resource "aws_security_group" "elb_security_group" {
-  name        = "elb-security-group"
-  description = "security group for elb"
-  vpc_id      = "${aws_vpc.main_vpc.id}"
-
-  ingress {
-    from_port   = 80
-    to_port     = 80
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  egress {
-    from_port       = 0
-    to_port         = 0
-    protocol        = "-1"
-    cidr_blocks     = ["0.0.0.0/0"]
+    ## INTERNET GATEWAY
+resource "aws_internet_gateway" "app_intenet_gateway" {
+  vpc_id = "${var.vpc_id}"
+  tags {
+    Name = "main"
   }
 }
 
+    ## SECURITY GROUP
 resource "aws_security_group" "app_security_group" {
   name        = "app-sg"
   description = "security group for app"
   vpc_id      = "${var.vpc_id}"
 
   ingress {
-    from_port   = 80
+     from_port   = 80
     to_port     = 80
     protocol    = "tcp"
     security_groups = ["${aws_security_group.elb_security_group.id}"]
@@ -137,13 +139,14 @@ resource "aws_security_group" "app_security_group" {
 
   ## INSTANCE
 
-      ## AUTO SCALING GROUP
+    ## INSTANCE
+
 
 resource "aws_launch_template" "applaunch_template" {
   name = "Project4-launch-manvir"
   image_id = "ami-c2b8bfbb"
   instance_type = "t2.micro"
-  user_data = "${var.app_user_data}"
+  user_data = "${data.template_file.app_user_data.rendered}"
   network_interfaces {
     security_groups = ["${aws_security_group.app_security_group.id}"]
   }
@@ -154,10 +157,11 @@ resource "aws_autoscaling_group" "app_auto_scaling" {
   desired_capacity = 3
   max_size = 4
   min_size = 3
-  vpc_zone_identifier = ["${aws_subnet.app_subnet_1a.id}","${aws_subnet.app_subnet_1b.id}","${aws_subnet.app_subnet_1c.id}"]
+  vpc_zone_identifier = ["${aws_subnet.app_subnet_1a.id}", "${aws_subnet.app_subnet_1b.id}","${aws_subnet.app_subnet_1c.id}"]
   launch_template = {
     id = "${aws_launch_template.applaunch_template.id}"
   }
+
 }
 
     ## ELB
@@ -174,8 +178,12 @@ resource "aws_elb" "elb_app" {
   }
     listener {
       lb_port = 80
-      lb_protocol = "tcp"
+      lb_protocol = "http"
       instance_port = "80"
-      instance_protocol = "tcp"
+      instance_protocol = "http"
     }
+  }
+  #template to run the app
+  data "template_file" "app_user_data" {
+  template = "${file("template/app/user_data.sh.tpl")}"
 }
