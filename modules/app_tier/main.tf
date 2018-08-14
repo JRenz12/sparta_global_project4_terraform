@@ -17,25 +17,26 @@ data "aws_availability_zones" "available" {}
 resource "aws_subnet" "app_subnet_1a" {
   vpc_id     = "${var.vpc_id}"
   cidr_block = "10.10.0.0/24"
-  availability_zone = "eu-west-1a"
+  availability_zone = "${data.aws_availability_zones.available.names[0]}"
+
   tags {
     Name = "subnet-app-project4"
   }
 }
 
 resource "aws_subnet" "app_subnet_1b" {
-vpc_id     = "${var.vpc_id}"
-cidr_block = "10.10.1.0/24"
-availability_zone = "eu-west-1b"
-tags {
-  Name = "subnet-app-project4"
-}
+  vpc_id     = "${var.vpc_id}"
+  cidr_block = "10.10.1.0/24"
+  availability_zone = "${data.aws_availability_zones.available.names[1]}"
+  tags {
+    Name = "subnet-app-project4"
+  }
 }
 
 resource "aws_subnet" "app_subnet_1c" {
   vpc_id     = "${var.vpc_id}"
   cidr_block = "10.10.2.0/24"
-  availability_zone = "eu-west-1c"
+  availability_zone = "${data.aws_availability_zones.available.names[2]}"
   tags {
     Name = "subnet-app-project4"
   }
@@ -61,8 +62,6 @@ resource "aws_route_table_association" "app_route_association" {
   route_table_id = "${aws_route_table.app_route_table.id}"
 }
 
-
-
     ## INTERNET GATEWAY
 resource "aws_internet_gateway" "app_intenet_gateway" {
   vpc_id = "${var.vpc_id}"
@@ -70,8 +69,6 @@ resource "aws_internet_gateway" "app_intenet_gateway" {
     Name = "main"
   }
 }
-
-
 
     ## SECURITY GROUP
 resource "aws_security_group" "app_security_group" {
@@ -95,17 +92,7 @@ resource "aws_security_group" "app_security_group" {
 
 
     ## INSTANCE
-resource "aws_instance" "app_instance" {
-  ami = "${var.app_ami_id}"
-  instance_type = "t2.micro"
-  user_data = "${var.user_data}"
-  subnet_id = "${aws_subnet.app_subnet_1a.id}"
-  security_groups = ["${aws_security_group.app_security_group.id}"]
-  associate_public_ip_address = true
-  tags {
-    Name = "app-instance-1a"
-  }
-}
+
 
   ## AUTO SCALING GROUP
 
@@ -113,18 +100,23 @@ resource "aws_launch_template" "app_launch_template" {
   name_prefix = "Project4-launch"
   image_id = "ami-c2b8bfbb"
   instance_type = "t2.micro"
+  user_data = "${data.template_file.app_user_data.rendered}"
+  network_interfaces {
+    security_groups = ["${aws_security_group.app_security_group.id}"]
+  }
 }
 
 resource "aws_autoscaling_group" "app_auto_scaling" {
-  availability_zones = ["eu-west-1a", "eu-west-1b", "eu-west-1c"]
+  load_balancers = ["${aws_elb.elb_app.id}"]
   desired_capacity = 3
   max_size = 4
   min_size = 3
-
+  vpc_zone_identifier = ["${aws_subnet.app_subnet_1a.id}", "${aws_subnet.app_subnet_1b.id}","${aws_subnet.app_subnet_1c.id}"]
   launch_template = {
     id = "${aws_launch_template.app_launch_template.id}"
     version = "$$Latest"
   }
+  
 }
 
     ## ELB
@@ -138,12 +130,16 @@ resource "aws_elb" "elb_app" {
     unhealthy_threshold = 2
     timeout = 3
     interval = 30
-    target = "HTTP:8080/"
+    target = "HTTP:80/"
   }
     listener {
       lb_port = 80
       lb_protocol = "http"
-      instance_port = "8080"
+      instance_port = "80"
       instance_protocol = "http"
     }
+  }
+  #template to run the app
+  data "template_file" "app_user_data" {
+  template = "${file("template/app/user_data.sh.tpl")}"
 }

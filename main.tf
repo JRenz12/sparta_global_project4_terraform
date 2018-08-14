@@ -4,7 +4,7 @@ template = "${file("${path.module}/scripts/app/init.sh.tpl")}"
 }
 
 module "app" {
-  source = "./modules/app_tier"
+  source = "modules/app_tier"
   vpc_id = "${module.app.vpc_id}"
   name = "APP-PROJECT4"
   app_ami_id = "${module.app.app_ami_id}"
