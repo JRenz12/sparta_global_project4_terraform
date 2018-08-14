@@ -1,1 +1,0 @@
-# sparta_global_project4_terraform
