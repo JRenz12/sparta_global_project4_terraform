@@ -73,6 +73,26 @@ resource "aws_security_group" "app_security_group" {
   vpc_id      = "${var.vpc_id}"
 
   ingress {
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    security_groups = ["${aws_security_group.elb_security_group.id}"]
+  }
+  egress {
+    from_port = 0
+    to_port = 0
+    protocol = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
+
+resource "aws_security_group" "elb_security_group" {
+  name        = "elb-sg"
+  description = "security group for elb"
+  vpc_id      = "${var.vpc_id}"
+
+  ingress {
     from_port   = 0
     to_port     = 0
     protocol    = "-1"
@@ -118,7 +138,7 @@ resource "aws_autoscaling_group" "app_auto_scaling" {
     ## ELB
 resource "aws_elb" "elb_app" {
   name = "elb-app"
-  security_groups = ["${aws_security_group.app_security_group.id}"]
+  security_groups = ["${aws_security_group.elb_security_group.id}"]
   subnets = ["${aws_subnet.app_subnet_1a.id}", "${aws_subnet.app_subnet_1b.id}", "${aws_subnet.app_subnet_1c.id}"]
 
   health_check {
