@@ -1,7 +1,3 @@
-provider "aws" {
-  region = "eu-west-1"
-}
-
     ## VPC
 resource "aws_vpc" "main_vpc" {
   cidr_block       = "${var.cidr_block}"
@@ -100,7 +96,7 @@ resource "aws_launch_template" "app_launch_template" {
   name_prefix = "Project4-launch"
   image_id = "ami-c2b8bfbb"
   instance_type = "t2.micro"
-  user_data = "${data.template_file.app_user_data.rendered}"
+  user_data = "${var.user_data}"
   network_interfaces {
     security_groups = ["${aws_security_group.app_security_group.id}"]
   }
@@ -116,7 +112,7 @@ resource "aws_autoscaling_group" "app_auto_scaling" {
     id = "${aws_launch_template.app_launch_template.id}"
     version = "$$Latest"
   }
-  
+
 }
 
     ## ELB
@@ -139,7 +135,3 @@ resource "aws_elb" "elb_app" {
       instance_protocol = "http"
     }
   }
-  #template to run the app
-  data "template_file" "app_user_data" {
-  template = "${file("template/app/user_data.sh.tpl")}"
-}
