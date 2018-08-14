@@ -66,7 +66,7 @@ resource "aws_internet_gateway" "app_intenet_gateway" {
   }
 }
 
-    ## SECURITY GROUP
+    ## SECURITY GROUPS
 resource "aws_security_group" "app_security_group" {
   name        = "app-sg"
   description = "security group for app"
@@ -76,7 +76,7 @@ resource "aws_security_group" "app_security_group" {
     from_port   = 80
     to_port     = 80
     protocol    = "tcp"
-    security_groups = ["${aws_security_group.elb_security_group.id}"]
+    security_groups = ["${aws_security_group.elb_security_group.id}","${aws_security_group.elk_security_group.id}"]
   }
   egress {
     from_port = 0

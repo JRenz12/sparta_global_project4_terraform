@@ -35,3 +35,11 @@ module "app" {
 #  cidr_block = ""
 #  user_data = ""
 #}
+
+
+module "elk" {
+  source = "modules/elk_tier"
+  cidr_block = "10.10.0.0/16"
+  key = "DevOpsStudents.pem"
+  private_key = "${file("~/.ssh/DevOpsStudents.pem")}"
+}
