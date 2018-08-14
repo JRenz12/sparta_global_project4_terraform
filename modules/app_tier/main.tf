@@ -76,7 +76,7 @@ resource "aws_security_group" "app_security_group" {
     from_port   = 80
     to_port     = 80
     protocol    = "tcp"
-    security_groups = ["${aws_security_group.elb_security_group.id}","${aws_security_group.elk_security_group.id}"]
+    security_groups = ["${aws_security_group.elb_security_group.id}","${var.elk_security_group}"]
   }
   egress {
     from_port = 0

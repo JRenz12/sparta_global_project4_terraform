@@ -25,6 +25,7 @@ module "app" {
   app_ami_id = "${module.app.app_ami_id}"
   cidr_block = "10.10.0.0/16"
   user_data = "${data.template_file.app_user_data.rendered}"
+  elk_security_group = "${module.elk.elk_security_group}"
 }
 
 #module "db" {

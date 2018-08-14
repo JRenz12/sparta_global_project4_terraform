@@ -16,3 +16,7 @@ variable "cidr_block" {
 variable "user_data" {
   description = "the vpc to launch the resource info"
 }
+
+variable "elk_security_group" {
+  description = "the elk security group"
+}

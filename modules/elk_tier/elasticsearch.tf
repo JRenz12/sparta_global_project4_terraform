@@ -1,10 +1,10 @@
 
 
 
-resource "aws_security_group" "allow_elk" {
+resource "aws_security_group" "elk_security_group" {
   name = "allow_elk"
   description = "All all elasticsearch traffic"
-  #vpc_id = "${aws_vpc.elk_vpc.id}"
+  vpc_id = "${aws_vpc.elk_vpc.id}"
 
   # elasticsearch port
   ingress {
@@ -53,7 +53,7 @@ resource "aws_instance" "elk" {
   instance_type = "t2.micro"
   key_name      = "${var.key}"
   vpc_security_group_ids = [
-    "${aws_security_group.allow_elk.id}",
+    "${aws_security_group.elk_security_group.id}",
   ]
 
   provisioner "file" {
@@ -121,7 +121,7 @@ resource "aws_instance" "elk" {
     }
   }
 
-  depends_on = ["aws_security_group.allow_elk"]
+  depends_on = ["aws_security_group.elk_security_group"]
 }
 
 resource "aws_eip" "ip" {
