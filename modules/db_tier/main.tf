@@ -2,6 +2,15 @@ provider "aws" {
   region = "eu-west-1"
 }
 
+# load the db template
+data "template_file" "db_tmplt" {
+
+   template = "${file("./scripts/app/db.sh.tpl")}"
+   vars {
+     db_1a = "10.10.4.1:27017"
+   }
+}
+
 # create a subnet
 resource "aws_subnet" "db_1a" {
   vpc_id = "${var.vpc_id}"
@@ -39,23 +48,39 @@ resource "aws_security_group" "db_sg"  {
   description = "${var.name} access"
   vpc_id = "${var.vpc_id}"
 
-  ingress {
-    from_port       = "27017"
-    to_port         = "27017"
-    protocol        = "tcp"
-    security_groups = ["${var.app_security_group}"]
-  }
-
-  egress {
-    from_port       = 0
-    to_port         = 0
-    protocol        = "-1"
-    cidr_blocks     = ["0.0.0.0/0"]
-  }
-
   tags {
     Name = "${var.name}-sg"
   }
+}
+
+resource "aws_security_group_rule" "mongodb_ssh" {
+  type            = "ingress"
+  from_port       = 22
+  to_port         = 22
+  protocol        = "tcp"
+  cidr_blocks     = ["0.0.0.0/0"]
+
+  security_group_id = "${aws_security_group.db_sg.id}"
+}
+
+resource "aws_security_group_rule" "mongodb_mongodb" {
+  type            = "ingress"
+  from_port       = 27017
+  to_port         = 27017
+  protocol        = "tcp"
+  cidr_blocks     = ["0.0.0.0/0"]
+
+  security_group_id = "${aws_security_group.db_sg.id}"
+}
+
+resource "aws_security_group_rule" "mongodb_mongodb_replication" {
+  type            = "ingress"
+  from_port       = 27019
+  to_port         = 27019
+  protocol        = "tcp"
+  cidr_blocks     = ["0.0.0.0/0"]
+
+  security_group_id = "${aws_security_group.db_sg.id}"
 }
 
 # public route table
@@ -87,8 +112,9 @@ resource "aws_instance" "db_1a" {
   ami           = "${var.db_ami_id}"
   subnet_id     = "${aws_subnet.db_1a.id}"
   vpc_security_group_ids = ["${aws_security_group.db_sg.id}"]
-  #private_ip = "10.10.4.1"
+  private_ip = "10.10.4.1"
   instance_type = "t2.micro"
+  user_data = "${data.template_file.db_tmplt.rendered}"
   tags {
       Name = "${var.name}-1a"
   }
