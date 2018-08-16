@@ -43,4 +43,5 @@ module "elk" {
   cidr_block = "10.10.0.0/16"
   key = "DevOpsStudents.pem"
   private_key = "${file("~/.ssh/DevOpsStudents.pem")}"
+  vpc_id = "${module.app.vpc_id}"
 }

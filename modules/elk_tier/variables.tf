@@ -8,3 +8,7 @@ variable "private_key" {
 variable "cidr_block" {
   description = "the vpc to launch the resource info"
 }
+
+variable "vpc_id" {
+  description = "vpc id for main vpc"
+}

@@ -1,5 +1,11 @@
 
-
+resource "aws_subnet" "elk_subnet" {
+  vpc_id     = "${aws_vpc.elk_vpc.id}"
+  cidr_block = "10.11.0.0/24"
+  tags {
+    Name = "elk-subnet"
+  }
+}
 
 resource "aws_security_group" "elk_security_group" {
   name = "allow_elk"
@@ -49,9 +55,10 @@ resource "aws_security_group" "elk_security_group" {
 }
 
 resource "aws_instance" "elk" {
-  ami           = "ami-6e1a0117"
+  ami           = "ami-b9889653"
   instance_type = "t2.micro"
   key_name      = "${var.key}"
+  subnet_id = "${aws_subnet.elk_subnet.id}"
   vpc_security_group_ids = [
     "${aws_security_group.elk_security_group.id}",
   ]
