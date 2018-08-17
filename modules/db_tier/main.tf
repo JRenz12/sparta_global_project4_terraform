@@ -7,7 +7,6 @@ provider "aws" {
 resource "aws_subnet" "db_1a" {
   vpc_id = "${var.vpc_id}"
   cidr_block = "10.10.4.0/24"
-  map_public_ip_on_launch = false
   availability_zone = "eu-west-1a"
   tags {
     Name = "${var.name} - 1a"
@@ -17,7 +16,6 @@ resource "aws_subnet" "db_1a" {
 resource "aws_subnet" "db_1b" {
   vpc_id = "${var.vpc_id}"
   cidr_block = "10.10.5.0/24"
-  map_public_ip_on_launch = false
   availability_zone = "eu-west-1b"
   tags {
     Name = "${var.name} - 1b"
@@ -27,7 +25,6 @@ resource "aws_subnet" "db_1b" {
 resource "aws_subnet" "db_1c" {
   vpc_id = "${var.vpc_id}"
   cidr_block = "10.10.6.0/24"
-  map_public_ip_on_launch = false
   availability_zone = "eu-west-1c"
   tags {
     Name = "${var.name} - 1c"
