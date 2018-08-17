@@ -18,9 +18,6 @@ module "db" {
   name = "DB-PROJECT4"
   app_security_group = "${module.app.app_security_group}"
   db_ami_id = "${module.db.db_ami_id}"
-  db_private_ip_a = "${module.db.db_private_ip_a}"
-  db_private_ip_b = "${module.db.db_private_ip_b}"
-  db_private_ip_c = "${module.db.db_private_ip_c}"
 
 #  cidr_block = ""
 }

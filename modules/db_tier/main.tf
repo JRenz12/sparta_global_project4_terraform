@@ -2,14 +2,6 @@ provider "aws" {
   region = "eu-west-1"
 }
 
-# load the db template
-data "template_file" "db_tmplt" {
-
-   template = "${file("./scripts/app/db.sh.tpl")}"
-   vars {
-     db_1a = "10.10.4.1:27017"
-   }
-}
 
 # create a subnet
 resource "aws_subnet" "db_1a" {
@@ -111,8 +103,8 @@ resource "aws_route_table_association" "db_1c" {
 resource "aws_instance" "db_1a" {
   ami           = "${var.db_ami_id}"
   subnet_id     = "${aws_subnet.db_1a.id}"
+  private_ip = "10.10.4.7"
   vpc_security_group_ids = ["${aws_security_group.db_sg.id}"]
-  private_ip = "10.10.4.1"
   instance_type = "t2.micro"
   user_data = "${data.template_file.db_tmplt.rendered}"
   tags {
@@ -123,6 +115,7 @@ resource "aws_instance" "db_1a" {
 resource "aws_instance" "db_1b" {
   ami           = "${var.db_ami_id}"
   subnet_id     = "${aws_subnet.db_1b.id}"
+  private_ip = "10.10.5.7"
   vpc_security_group_ids = ["${aws_security_group.db_sg.id}"]
   instance_type = "t2.micro"
   tags {
@@ -133,9 +126,19 @@ resource "aws_instance" "db_1b" {
 resource "aws_instance" "db_1c" {
   ami           = "${var.db_ami_id}"
   subnet_id     = "${aws_subnet.db_1c.id}"
+  private_ip = "10.10.6.7"
   vpc_security_group_ids = ["${aws_security_group.db_sg.id}"]
   instance_type = "t2.micro"
   tags {
       Name = "${var.name}-1c"
   }
+}
+
+
+
+# load the db template
+data "template_file" "db_tmplt" {
+
+   template = "${file("./scripts/app/db.sh.tpl")}"
+
 }

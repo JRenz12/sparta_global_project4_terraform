@@ -4,7 +4,8 @@ provider "aws" {
 
     ## VPC
 resource "aws_vpc" "main_vpc" {
-  cidr_block       = "${var.cidr_block}"
+  cidr_block  = "${var.cidr_block}"
+  enable_dns_hostnames = true
   tags {
     Name = "app-vpc"
   }
