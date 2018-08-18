@@ -15,7 +15,10 @@ resource "aws_route53_record" "manvir" {
 
 ## TEMPLATE
 data "template_file" "app_user_data" {
-template = "${file("${path.cwd}/template/app/user_data.sh.tpl")}"
+template = "${file("${path.cwd}/scripts/app/init.sh.tpl")}"
+  vars {
+    db_host = "mongodb://${module.db.db_1a_privateip}:27017/posts"
+  }
 }
 
 module "app" {
@@ -33,6 +36,6 @@ module "db" {
   name = "DB-PROJECT4"
   app_security_group = "${module.app.app_security_group}"
   db_ami_id = "${module.db.db_ami_id}"
-
+  app_internet_gateway = "${module.app.app_internet_gateway}"
 #  cidr_block = ""
 }

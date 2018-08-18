@@ -45,7 +45,7 @@ resource "aws_route_table" "app_route_table" {
 
   route {
     cidr_block = "0.0.0.0/0"
-    gateway_id = "${aws_internet_gateway.app_intenet_gateway.id}"
+    gateway_id = "${aws_internet_gateway.app_internet_gateway.id}"
   }
 
   tags {
@@ -53,13 +53,23 @@ resource "aws_route_table" "app_route_table" {
   }
 }
 
-resource "aws_route_table_association" "app_route_association" {
+resource "aws_route_table_association" "app_1a_association" {
   subnet_id      = "${aws_subnet.app_subnet_1a.id}"
   route_table_id = "${aws_route_table.app_route_table.id}"
 }
 
+resource "aws_route_table_association" "app_1b_association" {
+  subnet_id      = "${aws_subnet.app_subnet_1b.id}"
+  route_table_id = "${aws_route_table.app_route_table.id}"
+}
+
+resource "aws_route_table_association" "app_1c_association" {
+  subnet_id      = "${aws_subnet.app_subnet_1c.id}"
+  route_table_id = "${aws_route_table.app_route_table.id}"
+}
+
     ## INTERNET GATEWAY
-resource "aws_internet_gateway" "app_intenet_gateway" {
+resource "aws_internet_gateway" "app_internet_gateway" {
   vpc_id = "${var.vpc_id}"
   tags {
     Name = "main"

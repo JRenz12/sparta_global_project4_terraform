@@ -32,69 +32,27 @@ resource "aws_subnet" "db_1c" {
 }
 
 # security
-resource "aws_security_group" "db_sg"  {
-  name = "${var.name}-sg"
-  description = "${var.name} access"
-  vpc_id = "${var.vpc_id}"
+resource "aws_security_group" "db_security_group" {
+  name        = "db-sg"
+  description = "security group for app"
+  vpc_id      = "${var.vpc_id}"
 
-  tags {
-    Name = "${var.name}-sg"
+  ingress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+    security_groups = ["${var.app_security_group}"]
+  }
+  egress {
+    from_port = 0
+    to_port = 0
+    protocol = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
   }
 }
 
-resource "aws_security_group_rule" "mongodb_ssh" {
-  type            = "ingress"
-  from_port       = 22
-  to_port         = 22
-  protocol        = "tcp"
-  cidr_blocks     = ["0.0.0.0/0"]
 
-  security_group_id = "${aws_security_group.db_sg.id}"
-}
-
-resource "aws_security_group_rule" "mongodb_mongodb" {
-  type            = "ingress"
-  from_port       = 27017
-  to_port         = 27017
-  protocol        = "tcp"
-  cidr_blocks     = ["0.0.0.0/0"]
-
-  security_group_id = "${aws_security_group.db_sg.id}"
-}
-
-resource "aws_security_group_rule" "mongodb_mongodb_replication" {
-  type            = "ingress"
-  from_port       = 27019
-  to_port         = 27019
-  protocol        = "tcp"
-  cidr_blocks     = ["0.0.0.0/0"]
-
-  security_group_id = "${aws_security_group.db_sg.id}"
-}
-
-# public route table
-resource "aws_route_table" "db_rt" {
-  vpc_id = "${var.vpc_id}"
-
-  tags {
-    Name = "${var.name}-rt"
-  }
-}
-
-resource "aws_route_table_association" "db_1a" {
-  subnet_id      = "${aws_subnet.db_1a.id}"
-  route_table_id = "${aws_route_table.db_rt.id}"
-}
-
-resource "aws_route_table_association" "db_1b" {
-  subnet_id      = "${aws_subnet.db_1b.id}"
-  route_table_id = "${aws_route_table.db_rt.id}"
-}
-
-resource "aws_route_table_association" "db_1c" {
-  subnet_id      = "${aws_subnet.db_1c.id}"
-  route_table_id = "${aws_route_table.db_rt.id}"
-}
 
 # launch an instance
 resource "aws_instance" "db_1a" {

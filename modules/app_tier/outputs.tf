@@ -14,3 +14,8 @@ output "elb_app" {
   description = "elb of app"
   value = "${aws_elb.elb_app.dns_name}"
 }
+
+output "app_internet_gateway" {
+  description = "internet gateway for app"
+  value = "${aws_internet_gateway.app_internet_gateway.id}"
+}

@@ -13,3 +13,7 @@ variable "app_security_group" {
 variable "db_ami_id" {
   description = "mongodb ami"
 }
+
+variable "app_internet_gateway" {
+  description = "internet gateway for vpc"
+}
