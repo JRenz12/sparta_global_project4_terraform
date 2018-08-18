@@ -32,8 +32,6 @@ resource "aws_subnet" "db_1c" {
 }
 
 
-
-
 # security
 resource "aws_security_group" "db_sg" {
   name        = "db-sg"
@@ -57,11 +55,10 @@ resource "aws_security_group" "db_sg" {
 
 
 
-
 # launch an instance
 resource "aws_instance" "db_1a" {
   ami           = "${var.db_ami_id}"
-  subnet_id     = "${aws_subnet.db_subnet_1a.id}"
+  subnet_id     = "${aws_subnet.db_1a.id}"
   private_ip = "10.10.4.7"
   security_groups = ["${aws_security_group.db_sg.id}"]
   instance_type = "t2.micro"
@@ -73,7 +70,7 @@ resource "aws_instance" "db_1a" {
 
 resource "aws_instance" "db_1b" {
   ami           = "${var.db_ami_id}"
-  subnet_id     = "${aws_subnet.db_subnet_1b.id}"
+  subnet_id     = "${aws_subnet.db_1b.id}"
   private_ip = "10.10.5.7"
   security_groups = ["${aws_security_group.db_sg.id}"]
   instance_type = "t2.micro"
@@ -84,7 +81,7 @@ resource "aws_instance" "db_1b" {
 
 resource "aws_instance" "db_1c" {
   ami           = "${var.db_ami_id}"
-  subnet_id     = "${aws_subnet.db_subnet_1c.id}"
+  subnet_id     = "${aws_subnet.db_1c.id}"
   private_ip = "10.10.6.7"
   security_groups = ["${aws_security_group.db_sg.id}"]
   instance_type = "t2.micro"
