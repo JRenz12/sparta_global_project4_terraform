@@ -27,6 +27,7 @@ module "app" {
   app_ami_id = "${module.app.app_ami_id}"
   cidr_block = "10.10.0.0/16"
   user_data = "${data.template_file.app_user_data.rendered}"
+  db_1a_sg = "${module.db.db_1a_sg}"
 }
 
 module "db" {
@@ -35,6 +36,6 @@ module "db" {
   name = "DB-PROJECT4"
   app_security_group = "${module.app.app_security_group}"
   db_ami_id = "${module.db.db_ami_id}"
-  app_internet_gateway = "${module.app.app_internet_gateway}"
+  app_route_table = "${module.app.app_route_table}"
 #  cidr_block = ""
 }

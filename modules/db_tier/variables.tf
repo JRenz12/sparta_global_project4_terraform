@@ -14,6 +14,6 @@ variable "db_ami_id" {
   description = "mongodb ami"
 }
 
-variable "app_internet_gateway" {
+variable "app_route_table" {
   description = "internet gateway for vpc"
 }

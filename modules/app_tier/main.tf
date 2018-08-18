@@ -58,15 +58,6 @@ resource "aws_route_table_association" "app_1a_association" {
   route_table_id = "${aws_route_table.app_route_table.id}"
 }
 
-resource "aws_route_table_association" "app_1b_association" {
-  subnet_id      = "${aws_subnet.app_subnet_1b.id}"
-  route_table_id = "${aws_route_table.app_route_table.id}"
-}
-
-resource "aws_route_table_association" "app_1c_association" {
-  subnet_id      = "${aws_subnet.app_subnet_1c.id}"
-  route_table_id = "${aws_route_table.app_route_table.id}"
-}
 
     ## INTERNET GATEWAY
 resource "aws_internet_gateway" "app_internet_gateway" {
@@ -87,6 +78,7 @@ resource "aws_security_group" "app_security_group" {
     to_port     = 0
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
+    self = true
   }
   egress {
     from_port = 0
@@ -96,10 +88,10 @@ resource "aws_security_group" "app_security_group" {
   }
 }
 
-  ## AUTO SCALING GROUP
 
+  ## APP LAUNCH TEMPLATE
 resource "aws_launch_template" "app_launch_template" {
-  key_name = "app_launch_template"
+  name = "app_launch_template"
   image_id = "ami-c2b8bfbb"
   instance_type = "t2.micro"
   user_data = "${var.user_data}"
@@ -108,6 +100,8 @@ resource "aws_launch_template" "app_launch_template" {
   }
 }
 
+
+  ## AUTO SCALING GROUP
 resource "aws_autoscaling_group" "app_auto_scaling" {
   load_balancers = ["${aws_elb.elb_app.id}"]
   desired_capacity = 3
@@ -125,6 +119,7 @@ resource "aws_autoscaling_group" "app_auto_scaling" {
       propagate_at_launch = true
     },
   ]
+
 
 }
 

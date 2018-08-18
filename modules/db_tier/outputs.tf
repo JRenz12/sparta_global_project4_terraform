@@ -1,5 +1,5 @@
 output "db_ami_id" {
-  value = "ami-0ce380b886769d3a8"
+  value = "ami-01020378"
 }
 
 output "db_1a_privateip" {
@@ -7,12 +7,7 @@ output "db_1a_privateip" {
   value = "${aws_instance.db_1a.private_ip}"
 }
 
-output "db_1b_privateip" {
-  description = "db 1a private ip"
-  value = "${aws_instance.db_1b.private_ip}"
-}
-
-output "db_1c_privateip" {
-  description = "db 1a private ip"
-  value = "${aws_instance.db_1c.private_ip}"
+output "db_1a_sg" {
+  description = "db 1a instance id"
+  value = "${aws_security_group.db_sg.id}"
 }

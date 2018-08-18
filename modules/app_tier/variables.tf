@@ -24,3 +24,7 @@ variable "app_names" {
     "2" = "app_1c"
   }
 }
+
+variable "db_1a_sg" {
+  description = "db 1a"
+}

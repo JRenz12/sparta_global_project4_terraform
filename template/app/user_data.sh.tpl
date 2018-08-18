@@ -1,1 +1,7 @@
-IyEvYmluL2Jhc2gNCg0KZXhwb3J0IExDX0FMTD1jDQpjZCAvaG9tZS91YnVudHUvYXBwDQpucG0gaW5zdGFsbA0KZXhwb3J0IERCX0hPU1Q9JHtkYl9ob3N0fQ0KcG0yIHN0YXJ0IGFwcC5qcw0K
+#!/bin/bash
+
+export LC_ALL=c
+cd /home/ubuntu/app
+npm install
+export DB_HOST=mongodb://10.10.4.7:27017/posts
+pm2 start app.js
