@@ -32,6 +32,23 @@ resource "aws_subnet" "db_1c" {
 }
 
 
+
+# create an association
+resource "aws_route_table_association" "db_1a_association" {
+  subnet_id      = "${aws_subnet.db_1a.id}"
+  route_table_id = "${var.app_route_table}"
+}
+
+resource "aws_route_table_association" "db_1b_association" {
+  subnet_id      = "${aws_subnet.db_1b.id}"
+  route_table_id = "${var.app_route_table}"
+}
+
+resource "aws_route_table_association" "db_1c_association" {
+  subnet_id      = "${aws_subnet.db_1c.id}"
+  route_table_id = "${var.app_route_table}"
+}
+
 # security
 resource "aws_security_group" "db_sg" {
   name        = "db-sg"
@@ -62,7 +79,7 @@ resource "aws_instance" "db_1a" {
   private_ip = "10.10.4.7"
   security_groups = ["${aws_security_group.db_sg.id}"]
   instance_type = "t2.micro"
-  user_data = "${data.template_file.db_tmplt.rendered}"
+  user_data = "${data.template_file.db_1a_tmplt.rendered}"
   tags {
       Name = "${var.name}-1a"
   }
@@ -74,7 +91,7 @@ resource "aws_instance" "db_1b" {
   private_ip = "10.10.5.7"
   security_groups = ["${aws_security_group.db_sg.id}"]
   instance_type = "t2.micro"
-  user_data = "${data.template_file.db_slave.rendered}"
+  user_data = "${data.template_file.db_1b_tmplt.rendered}"
   tags {
       Name = "${var.name}-1b"
   }
@@ -86,7 +103,7 @@ resource "aws_instance" "db_1c" {
   private_ip = "10.10.6.7"
   security_groups = ["${aws_security_group.db_sg.id}"]
   instance_type = "t2.micro"
-  user_data = "${data.template_file.db_slave.rendered}"
+  user_data = "${data.template_file.db_1c_tmplt.rendered}"
   tags {
       Name = "${var.name}-1c"
   }
@@ -96,10 +113,16 @@ resource "aws_instance" "db_1c" {
 
 
 # load the db template
-data "template_file" "db_tmplt" {
+data "template_file" "db_1a_tmplt" {
    template = "${file("./scripts/app/db.sh.tpl")}"
 }
 
-data "template_file" "db_slave" {
-   template = "${file("./scripts/app/db_slave.sh.tpl")}"
+data "template_file" "db_1b_tmplt" {
+   template = "${file("./scripts/app/db_1b_tmplt.sh.tpl")}"
+
+}
+
+data "template_file" "db_1c_tmplt" {
+   template = "${file("./scripts/app/db_1c_tmplt.sh.tpl")}"
+   
 }

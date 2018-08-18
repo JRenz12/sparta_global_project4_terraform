@@ -1,9 +1,14 @@
 #!/bin/bash
 
-mongo --host 10.10.4.7
-rs.initiate()
-rs.add(“10.10.5.7”)
-rs.addArb(“10.10.6.7”)
-
+mongod --port 27017 --dbpath /srv/mongodb/db0 --replSet rs0 --bind_ip localhost,10.10.4.7
+mongo
+db.isMaster()
+rs.initiate( {
+   _id : "rs0",
+   members: [
+      { _id: 0, host: "10.10.4.7:27017" },
+      { _id: 1, host: "10.10.5.7:27017" },
+      { _id: 2, host: "10.10.6.7:27017" }
+   ]
+})
 ## send a string to mongo and run it as a script.
-rs.slaveOk()
