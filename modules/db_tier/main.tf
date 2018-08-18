@@ -74,6 +74,7 @@ resource "aws_instance" "db_1b" {
   private_ip = "10.10.5.7"
   security_groups = ["${aws_security_group.db_sg.id}"]
   instance_type = "t2.micro"
+  user_data = "${data.template_file.db_slave.rendered}"
   tags {
       Name = "${var.name}-1b"
   }
@@ -85,6 +86,7 @@ resource "aws_instance" "db_1c" {
   private_ip = "10.10.6.7"
   security_groups = ["${aws_security_group.db_sg.id}"]
   instance_type = "t2.micro"
+  user_data = "${data.template_file.db_slave.rendered}"
   tags {
       Name = "${var.name}-1c"
   }
@@ -95,7 +97,9 @@ resource "aws_instance" "db_1c" {
 
 # load the db template
 data "template_file" "db_tmplt" {
-
    template = "${file("./scripts/app/db.sh.tpl")}"
+}
 
+data "template_file" "db_slave" {
+   template = "${file("./scripts/app/db_slave.sh.tpl")}"
 }
