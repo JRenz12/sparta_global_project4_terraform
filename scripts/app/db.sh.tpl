@@ -2,7 +2,7 @@
 
 mongod --port 27017 --dbpath /srv/mongodb/db0 --replSet rs0 --bind_ip localhost,10.10.4.7
 mongo
-db.isMaster()
+
 rs.initiate( {
    _id : "rs0",
    members: [
@@ -11,4 +11,6 @@ rs.initiate( {
       { _id: 2, host: "10.10.6.7:27017" }
    ]
 })
+
+rs.slaveOk()
 ## send a string to mongo and run it as a script.
