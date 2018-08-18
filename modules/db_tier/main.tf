@@ -4,12 +4,30 @@ provider "aws" {
 
 
 # create a subnet
-resource "aws_subnet" "db_subnet" {
+resource "aws_subnet" "db_1a" {
   vpc_id = "${var.vpc_id}"
   cidr_block = "10.10.4.0/24"
   availability_zone = "eu-west-1a"
   tags {
     Name = "${var.name} - 1a"
+  }
+}
+
+resource "aws_subnet" "db_1b" {
+  vpc_id = "${var.vpc_id}"
+  cidr_block = "10.10.5.0/24"
+  availability_zone = "eu-west-1b"
+  tags {
+    Name = "${var.name} - 1b"
+  }
+}
+
+resource "aws_subnet" "db_1c" {
+  vpc_id = "${var.vpc_id}"
+  cidr_block = "10.10.6.0/24"
+  availability_zone = "eu-west-1c"
+  tags {
+    Name = "${var.name} - 1c"
   }
 }
 
@@ -42,13 +60,36 @@ resource "aws_security_group" "db_sg" {
 
 # launch an instance
 resource "aws_instance" "db_1a" {
-  ami = "ami-0ce380b886769d3a8"
-  instance_type = "t2.micro"
-  subnet_id = "${aws_subnet.db_subnet.id}"
+  ami           = "${var.db_ami_id}"
+  subnet_id     = "${aws_subnet.db_subnet_1a.id}"
   private_ip = "10.10.4.7"
   security_groups = ["${aws_security_group.db_sg.id}"]
+  instance_type = "t2.micro"
+  user_data = "${data.template_file.db_tmplt.rendered}"
   tags {
-    Name = "Manvir-db"
+      Name = "${var.name}-1a"
+  }
+}
+
+resource "aws_instance" "db_1b" {
+  ami           = "${var.db_ami_id}"
+  subnet_id     = "${aws_subnet.db_subnet_1b.id}"
+  private_ip = "10.10.5.7"
+  security_groups = ["${aws_security_group.db_sg.id}"]
+  instance_type = "t2.micro"
+  tags {
+      Name = "${var.name}-1b"
+  }
+}
+
+resource "aws_instance" "db_1c" {
+  ami           = "${var.db_ami_id}"
+  subnet_id     = "${aws_subnet.db_subnet_1c.id}"
+  private_ip = "10.10.6.7"
+  security_groups = ["${aws_security_group.db_sg.id}"]
+  instance_type = "t2.micro"
+  tags {
+      Name = "${var.name}-1c"
   }
 }
 
@@ -59,8 +100,5 @@ resource "aws_instance" "db_1a" {
 data "template_file" "db_tmplt" {
 
    template = "${file("./scripts/app/db.sh.tpl")}"
-   vars {
-    db_1a_privateip = "10.10.4.7"
-   }
 
 }

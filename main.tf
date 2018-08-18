@@ -4,7 +4,7 @@ provider "aws" {
 
 
 # ROUTE 53 RECORD TO APP
-resource "aws_route53_record" "manvir" {
+resource "aws_route53_record" "engineering12" {
   zone_id = "Z3CCIZELFLJ3SC"
   name    = "engineering12.spartaglobal.education"
   type    = "CNAME"
@@ -15,9 +15,6 @@ resource "aws_route53_record" "manvir" {
 ## APP TEMPLATE
 data "template_file" "app_user_data" {
 template = "${file("${path.cwd}/template/app/user_data.sh.tpl")}"
-  vars {
-    db_host = "mongodb://${module.db.db_1a_privateip}:27017/posts"
-  }
 }
 
 module "app" {
