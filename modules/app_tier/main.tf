@@ -58,6 +58,16 @@ resource "aws_route_table_association" "app_1a_association" {
   route_table_id = "${aws_route_table.app_route_table.id}"
 }
 
+resource "aws_route_table_association" "app_1b_association" {
+  subnet_id      = "${aws_subnet.app_subnet_1b.id}"
+  route_table_id = "${aws_route_table.app_route_table.id}"
+}
+
+resource "aws_route_table_association" "app_1c_association" {
+  subnet_id      = "${aws_subnet.app_subnet_1c.id}"
+  route_table_id = "${aws_route_table.app_route_table.id}"
+}
+
 
     ## INTERNET GATEWAY
 resource "aws_internet_gateway" "app_internet_gateway" {

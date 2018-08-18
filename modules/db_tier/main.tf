@@ -42,7 +42,7 @@ resource "aws_security_group" "db_sg" {
 
 # launch an instance
 resource "aws_instance" "db_1a" {
-  ami = "ami-01020378"
+  ami = "ami-0ce380b886769d3a8"
   instance_type = "t2.micro"
   subnet_id = "${aws_subnet.db_subnet.id}"
   private_ip = "10.10.4.7"
