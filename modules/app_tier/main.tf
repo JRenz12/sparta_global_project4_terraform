@@ -99,7 +99,7 @@ resource "aws_security_group" "app_security_group" {
   ## AUTO SCALING GROUP
 
 resource "aws_launch_template" "app_launch_template" {
-  name_prefix = "Project4-launch"
+  key_name = "app_launch_template"
   image_id = "ami-c2b8bfbb"
   instance_type = "t2.micro"
   user_data = "${var.user_data}"
@@ -118,6 +118,13 @@ resource "aws_autoscaling_group" "app_auto_scaling" {
     id = "${aws_launch_template.app_launch_template.id}"
     version = "$$Latest"
   }
+  tags = [
+    {
+      key                 = "name"
+      value               = "APP_instance"
+      propagate_at_launch = true
+    },
+  ]
 
 }
 

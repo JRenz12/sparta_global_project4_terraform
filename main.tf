@@ -12,8 +12,7 @@ resource "aws_route53_record" "manvir" {
   records = ["${module.app.elb_app}"]
 }
 
-
-## TEMPLATE
+## APP TEMPLATE
 data "template_file" "app_user_data" {
 template = "${file("${path.cwd}/scripts/app/init.sh.tpl")}"
   vars {

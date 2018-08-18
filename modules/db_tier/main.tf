@@ -42,7 +42,7 @@ resource "aws_security_group" "db_security_group" {
     to_port     = 0
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
-    
+
   }
   egress {
     from_port = 0
@@ -95,5 +95,10 @@ resource "aws_instance" "db_1c" {
 data "template_file" "db_tmplt" {
 
    template = "${file("./scripts/app/db.sh.tpl")}"
+   vars {
+    db_1a_privateip = "http://10.10.4.7"
+    db_1b_privateip = "${aws_instance.db_1b.private_ip}"
+    db_1c_privateip = "${aws_instance.db_1c.private_ip}"
+   }
 
 }
