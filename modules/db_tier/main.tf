@@ -66,7 +66,7 @@ resource "aws_security_group" "db_sg" {
     from_port   = 0
     to_port     = 0
     protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/24"]
+    cidr_blocks = ["0.0.0.0/0"]
     self = true
   }
 }
@@ -80,6 +80,7 @@ resource "aws_instance" "db_1a" {
   private_ip = "10.10.4.7"
   security_groups = ["${aws_security_group.db_sg.id}"]
   instance_type = "t2.micro"
+  associate_public_ip_address = true
   user_data = "${data.template_file.db_1a_tmplt.rendered}"
   tags {
       Name = "${var.name}-1a"
@@ -90,6 +91,7 @@ resource "aws_instance" "db_1b" {
   ami           = "${var.db_ami_id}"
   subnet_id     = "${aws_subnet.db_1b.id}"
   private_ip = "10.10.5.7"
+  associate_public_ip_address = true
   security_groups = ["${aws_security_group.db_sg.id}"]
   instance_type = "t2.micro"
   user_data = "${data.template_file.db_1b_tmplt.rendered}"
@@ -102,6 +104,7 @@ resource "aws_instance" "db_1c" {
   ami           = "${var.db_ami_id}"
   subnet_id     = "${aws_subnet.db_1c.id}"
   private_ip = "10.10.6.7"
+  associate_public_ip_address = true
   security_groups = ["${aws_security_group.db_sg.id}"]
   instance_type = "t2.micro"
   user_data = "${data.template_file.db_1c_tmplt.rendered}"
