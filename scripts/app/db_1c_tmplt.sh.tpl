@@ -1,6 +1,6 @@
 #!/bin/bash
 
-mongod --dbpath /srv/mongodb/db0 --replSet rs0  --bind_ip localhost, 10.10.6.7
+mongod --dbpath /srv/mongodb/db0 --replSet rs0  --bind_ip localhost, 10.10.4.7
 
 mongo
 rs.slaveOk()
