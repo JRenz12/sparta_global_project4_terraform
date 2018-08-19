@@ -115,7 +115,7 @@ resource "aws_launch_template" "app_launch_template" {
 resource "aws_autoscaling_group" "app_auto_scaling" {
   load_balancers = ["${aws_elb.elb_app.id}"]
   health_check_type = "ELB"
-  health_check_grace_period = "30"
+  health_check_grace_period = "240"
   desired_capacity = 3
   max_size = 4
   min_size = 3
@@ -145,7 +145,7 @@ resource "aws_elb" "elb_app" {
     healthy_threshold = 2
     unhealthy_threshold = 2
     timeout = 3
-    interval = 120
+    interval = 240
     target = "HTTP:80/"
   }
     listener {

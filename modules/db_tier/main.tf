@@ -67,6 +67,7 @@ resource "aws_security_group" "db_sg" {
     to_port     = 0
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/24"]
+    self = true
   }
 }
 
@@ -124,5 +125,5 @@ data "template_file" "db_1b_tmplt" {
 
 data "template_file" "db_1c_tmplt" {
    template = "${file("./scripts/app/db_1c_tmplt.sh.tpl")}"
-   
+
 }
