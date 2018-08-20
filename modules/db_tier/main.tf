@@ -3,10 +3,13 @@ provider "aws" {
 }
 
 
+
+
+
 # create a subnet
 resource "aws_subnet" "db_1a" {
   vpc_id = "${var.vpc_id}"
-  cidr_block = "10.10.4.0/24"
+  cidr_block = "15.10.4.0/24"
   availability_zone = "eu-west-1a"
   tags {
     Name = "${var.name} - 1a"
@@ -15,7 +18,7 @@ resource "aws_subnet" "db_1a" {
 
 resource "aws_subnet" "db_1b" {
   vpc_id = "${var.vpc_id}"
-  cidr_block = "10.10.5.0/24"
+  cidr_block = "15.10.5.0/24"
   availability_zone = "eu-west-1b"
   tags {
     Name = "${var.name} - 1b"
@@ -24,7 +27,7 @@ resource "aws_subnet" "db_1b" {
 
 resource "aws_subnet" "db_1c" {
   vpc_id = "${var.vpc_id}"
-  cidr_block = "10.10.6.0/24"
+  cidr_block = "15.10.6.0/24"
   availability_zone = "eu-west-1c"
   tags {
     Name = "${var.name} - 1c"
@@ -78,10 +81,10 @@ resource "aws_security_group" "db_sg" {
 resource "aws_instance" "db_1a" {
   ami           = "${var.db_ami_id}"
   subnet_id     = "${aws_subnet.db_1a.id}"
-  private_ip = "10.10.4.7"
+  associate_public_ip_address = true
+  private_ip = "15.10.4.7"
   security_groups = ["${aws_security_group.db_sg.id}"]
   instance_type = "t2.micro"
-  associate_public_ip_address = true
   user_data = "${data.template_file.db_1a_tmplt.rendered}"
   tags {
       Name = "${var.name}-1a"
@@ -91,11 +94,10 @@ resource "aws_instance" "db_1a" {
 resource "aws_instance" "db_1b" {
   ami           = "${var.db_ami_id}"
   subnet_id     = "${aws_subnet.db_1b.id}"
-  private_ip = "10.10.5.7"
-  associate_public_ip_address = true
+  private_ip = "15.10.5.7"
   security_groups = ["${aws_security_group.db_sg.id}"]
   instance_type = "t2.micro"
-  user_data = "${data.template_file.db_1b_tmplt.rendered}"
+  user_data = "${data.template_file.db_1a_tmplt.rendered}"
   tags {
       Name = "${var.name}-1b"
   }
@@ -104,27 +106,24 @@ resource "aws_instance" "db_1b" {
 resource "aws_instance" "db_1c" {
   ami           = "${var.db_ami_id}"
   subnet_id     = "${aws_subnet.db_1c.id}"
-  private_ip = "10.10.6.7"
-  associate_public_ip_address = true
+  private_ip = "15.10.6.7"
   security_groups = ["${aws_security_group.db_sg.id}"]
   instance_type = "t2.micro"
-  user_data = "${data.template_file.db_1c_tmplt.rendered}"
+  user_data = "${data.template_file.db_1a_tmplt.rendered}"
   tags {
       Name = "${var.name}-1c"
   }
 }
 
 resource "aws_instance" "db_provisioner" {
-  ami           = "ami-b9889653"
+  ami           = "ami-06562d635f4558667"
   subnet_id     = "${aws_subnet.db_1a.id}"
-  private_ip = "10.10.4.8"
-  associate_public_ip_address = true
   security_groups = ["${aws_security_group.db_sg.id}"]
   instance_type = "t2.micro"
-  user_data = "${data.template_file.db_provisioner_tmplt.rendered}"
   tags {
       Name = "${var.name}-provisioner"
   }
+
 }
 
 
@@ -133,17 +132,9 @@ data "template_file" "db_1a_tmplt" {
    template = "${file("./scripts/app/db.sh.tpl")}"
 }
 
-data "template_file" "db_1b_tmplt" {
-   template = "${file("./scripts/app/db_1b_tmplt.sh.tpl")}"
-
-}
-
-data "template_file" "db_1c_tmplt" {
-   template = "${file("./scripts/app/db_1c_tmplt.sh.tpl")}"
-
-}
-
 data "template_file" "db_provisioner_tmplt" {
    template = "${file("./scripts/app/db_provisioner_tmplt.sh.tpl")}"
-
+   vars {
+     db1 = "${aws_instance.db_1a.public_dns}"
+   }
 }

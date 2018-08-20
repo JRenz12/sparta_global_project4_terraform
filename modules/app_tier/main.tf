@@ -1,6 +1,7 @@
     ## VPC
 resource "aws_vpc" "main_vpc" {
   cidr_block  = "${var.cidr_block}"
+  enable_dns_hostnames = true
   tags {
     Name = "app-vpc"
   }
@@ -13,7 +14,7 @@ data "aws_availability_zones" "available" {}
     ## SUBNETS
 resource "aws_subnet" "app_subnet_1a" {
   vpc_id     = "${var.vpc_id}"
-  cidr_block = "10.10.0.0/24"
+  cidr_block = "15.10.0.0/24"
   availability_zone = "${data.aws_availability_zones.available.names[0]}"
 
   tags {
@@ -23,7 +24,7 @@ resource "aws_subnet" "app_subnet_1a" {
 
 resource "aws_subnet" "app_subnet_1b" {
   vpc_id     = "${var.vpc_id}"
-  cidr_block = "10.10.1.0/24"
+  cidr_block = "15.10.1.0/24"
   availability_zone = "${data.aws_availability_zones.available.names[1]}"
   tags {
     Name = "subnet-app-project4"
@@ -32,7 +33,7 @@ resource "aws_subnet" "app_subnet_1b" {
 
 resource "aws_subnet" "app_subnet_1c" {
   vpc_id     = "${var.vpc_id}"
-  cidr_block = "10.10.2.0/24"
+  cidr_block = "15.10.2.0/24"
   availability_zone = "${data.aws_availability_zones.available.names[2]}"
   tags {
     Name = "subnet-app-project4"
@@ -101,7 +102,7 @@ resource "aws_security_group" "app_security_group" {
 
   ## APP LAUNCH TEMPLATE
 resource "aws_launch_template" "app_launch_template" {
-  name = "app_launch_template"
+  name = "app_launch_template-mani"
   image_id = "ami-c2b8bfbb"
   instance_type = "t2.micro"
   user_data = "${var.user_data}"
@@ -137,7 +138,7 @@ resource "aws_autoscaling_group" "app_auto_scaling" {
 
     ## ELB
 resource "aws_elb" "elb_app" {
-  name = "elb-app"
+  name = "elb-app-mani"
   security_groups = ["${aws_security_group.app_security_group.id}"]
   subnets = ["${aws_subnet.app_subnet_1a.id}", "${aws_subnet.app_subnet_1b.id}", "${aws_subnet.app_subnet_1c.id}"]
 
