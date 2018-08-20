@@ -81,7 +81,6 @@ resource "aws_security_group" "db_sg" {
 resource "aws_instance" "db_1a" {
   ami           = "${var.db_ami_id}"
   subnet_id     = "${aws_subnet.db_1a.id}"
-  associate_public_ip_address = true
   private_ip = "15.10.4.7"
   security_groups = ["${aws_security_group.db_sg.id}"]
   instance_type = "t2.micro"
@@ -94,7 +93,7 @@ resource "aws_instance" "db_1a" {
 resource "aws_instance" "db_1b" {
   ami           = "${var.db_ami_id}"
   subnet_id     = "${aws_subnet.db_1b.id}"
-  private_ip = "15.10.5.7"
+  private_ip = "15.10.4.7"
   security_groups = ["${aws_security_group.db_sg.id}"]
   instance_type = "t2.micro"
   user_data = "${data.template_file.db_1a_tmplt.rendered}"
@@ -106,7 +105,7 @@ resource "aws_instance" "db_1b" {
 resource "aws_instance" "db_1c" {
   ami           = "${var.db_ami_id}"
   subnet_id     = "${aws_subnet.db_1c.id}"
-  private_ip = "15.10.6.7"
+  private_ip = "15.10.4.7"
   security_groups = ["${aws_security_group.db_sg.id}"]
   instance_type = "t2.micro"
   user_data = "${data.template_file.db_1a_tmplt.rendered}"
@@ -115,16 +114,6 @@ resource "aws_instance" "db_1c" {
   }
 }
 
-resource "aws_instance" "db_provisioner" {
-  ami           = "ami-06562d635f4558667"
-  subnet_id     = "${aws_subnet.db_1a.id}"
-  security_groups = ["${aws_security_group.db_sg.id}"]
-  instance_type = "t2.micro"
-  tags {
-      Name = "${var.name}-provisioner"
-  }
-
-}
 
 
 # load the db template
