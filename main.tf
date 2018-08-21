@@ -22,7 +22,7 @@ module "app" {
   vpc_id = "${module.app.vpc_id}"
   name = "APP-PROJECT4"
   app_ami_id = "${module.app.app_ami_id}"
-  cidr_block = "15.10.0.0/16"
+  cidr_block = "10.10.0.0/16"
   user_data = "${data.template_file.app_user_data.rendered}"
   db_1a_sg = "${module.db.db_1a_sg}"
 }

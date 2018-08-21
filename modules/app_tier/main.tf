@@ -14,7 +14,7 @@ data "aws_availability_zones" "available" {}
     ## SUBNETS
 resource "aws_subnet" "app_subnet_1a" {
   vpc_id     = "${var.vpc_id}"
-  cidr_block = "15.10.0.0/24"
+  cidr_block = "10.10.0.0/24"
   availability_zone = "${data.aws_availability_zones.available.names[0]}"
 
   tags {
@@ -24,7 +24,7 @@ resource "aws_subnet" "app_subnet_1a" {
 
 resource "aws_subnet" "app_subnet_1b" {
   vpc_id     = "${var.vpc_id}"
-  cidr_block = "15.10.1.0/24"
+  cidr_block = "10.10.1.0/24"
   availability_zone = "${data.aws_availability_zones.available.names[1]}"
   tags {
     Name = "subnet-app-project4"
@@ -33,7 +33,7 @@ resource "aws_subnet" "app_subnet_1b" {
 
 resource "aws_subnet" "app_subnet_1c" {
   vpc_id     = "${var.vpc_id}"
-  cidr_block = "15.10.2.0/24"
+  cidr_block = "10.10.2.0/24"
   availability_zone = "${data.aws_availability_zones.available.names[2]}"
   tags {
     Name = "subnet-app-project4"
