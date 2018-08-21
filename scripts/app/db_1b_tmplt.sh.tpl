@@ -1,7 +1,8 @@
 #!/bin/bash
 
-export LC_ALL
+export LC_ALL=C
 
-sudo mkdir ./db0
-sudo chown chmod 755 ./dbo
-sudo mongod --replSet rs0 --port 27017 --dbpath ./db0 —bind_ip localhost, 10.10.4.7
+sudo mkdir ./posts
+sudo chown chmod 755 ./posts
+
+mongod --replSet rs0 --port 27017 --dbpath ./posts —bind_ip localhost,0.0.0.0
