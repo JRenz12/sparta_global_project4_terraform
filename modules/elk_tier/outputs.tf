@@ -7,3 +7,11 @@ output "elk_security_group" {
   description = "elk security group"
   value = "${aws_security_group.elk_security_group.id}"
 }
+
+output "key"{
+  value = "DevOpsStudents"
+}
+
+output "private_key"{
+  value = "${file("~/.ssh/DevOpsStudents.pem")}"
+}

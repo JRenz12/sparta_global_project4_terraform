@@ -10,9 +10,9 @@ resource "aws_vpc" "main_vpc" {
 data "aws_availability_zones" "available" {}
 
     ## SUBNETS
-resource "aws_subnet" "app_subnet_1a" {
+resource "aws_subnet" "kiran_app_subnet_1a" {
   vpc_id     = "${var.vpc_id}"
-  cidr_block = "10.10.0.0/24"
+  cidr_block = "14.10.1.0/24"
   availability_zone = "${data.aws_availability_zones.available.names[0]}"
 
   tags {
@@ -20,18 +20,18 @@ resource "aws_subnet" "app_subnet_1a" {
   }
 }
 
-resource "aws_subnet" "app_subnet_1b" {
+resource "aws_subnet" "kiran_app_subnet_1b" {
   vpc_id     = "${var.vpc_id}"
-  cidr_block = "10.10.1.0/24"
+  cidr_block = "14.10.2.0/24"
   availability_zone = "${data.aws_availability_zones.available.names[1]}"
   tags {
     Name = "subnet-app-project4"
   }
 }
 
-resource "aws_subnet" "app_subnet_1c" {
+resource "aws_subnet" "kiran_app_subnet_1c" {
   vpc_id     = "${var.vpc_id}"
-  cidr_block = "10.10.2.0/24"
+  cidr_block = "14.10.3.0/24"
   availability_zone = "${data.aws_availability_zones.available.names[2]}"
   tags {
     Name = "subnet-app-project4"
@@ -54,7 +54,7 @@ resource "aws_route_table" "app_route_table" {
 }
 
 resource "aws_route_table_association" "app_route_association" {
-  subnet_id      = "${aws_subnet.app_subnet_1a.id}"
+  subnet_id      = "${aws_subnet.kiran_app_subnet_1a.id}"
   route_table_id = "${aws_route_table.app_route_table.id}"
 }
 
@@ -112,8 +112,8 @@ resource "aws_security_group" "elb_security_group" {
 
   ## AUTO SCALING GROUP
 
-resource "aws_launch_template" "app_launch_template" {
-  name_prefix = "Project4-launch"
+resource "aws_launch_template" "app_template" {
+  name = "app_template"
   image_id = "ami-c2b8bfbb"
   instance_type = "t2.micro"
   user_data = "${var.user_data}"
@@ -127,9 +127,9 @@ resource "aws_autoscaling_group" "app_auto_scaling" {
   desired_capacity = 3
   max_size = 4
   min_size = 3
-  vpc_zone_identifier = ["${aws_subnet.app_subnet_1a.id}", "${aws_subnet.app_subnet_1b.id}","${aws_subnet.app_subnet_1c.id}"]
+  vpc_zone_identifier = ["${aws_subnet.kiran_app_subnet_1a.id}", "${aws_subnet.kiran_app_subnet_1b.id}","${aws_subnet.kiran_app_subnet_1c.id}"]
   launch_template = {
-    id = "${aws_launch_template.app_launch_template.id}"
+    id = "${aws_launch_template.app_template.id}"
     version = "$$Latest"
   }
 
@@ -137,9 +137,9 @@ resource "aws_autoscaling_group" "app_auto_scaling" {
 
     ## ELB
 resource "aws_elb" "elb_app" {
-  name = "elb-app"
+  name = "elb-kiran"
   security_groups = ["${aws_security_group.elb_security_group.id}"]
-  subnets = ["${aws_subnet.app_subnet_1a.id}", "${aws_subnet.app_subnet_1b.id}", "${aws_subnet.app_subnet_1c.id}"]
+  subnets = ["${aws_subnet.kiran_app_subnet_1a.id}", "${aws_subnet.kiran_app_subnet_1b.id}", "${aws_subnet.kiran_app_subnet_1c.id}"]
 
   health_check {
     healthy_threshold = 2
