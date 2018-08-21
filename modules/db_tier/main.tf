@@ -98,7 +98,6 @@ resource "aws_instance" "db_1b" {
   security_groups = ["${aws_security_group.db_sg.id}"]
   instance_type = "t2.micro"
 
-  user_data = "${data.template_file.db_1a_tmplt.rendered}"
   tags {
       Name = "${var.name}-1b"
   }
@@ -110,13 +109,24 @@ resource "aws_instance" "db_1c" {
   private_ip = "10.10.6.7"
   security_groups = ["${aws_security_group.db_sg.id}"]
   instance_type = "t2.micro"
-  user_data = "${data.template_file.db_1a_tmplt.rendered}"
   tags {
       Name = "${var.name}-1c"
   }
 }
 
-
+# launch an instance
+resource "aws_instance" "db_provisioner" {
+  ami           = "${var.db_ami_id}"
+  subnet_id     = "${aws_subnet.db_1a.id}"
+  private_ip = "10.10.4.8"
+  security_groups = ["${aws_security_group.db_sg.id}"]
+  instance_type = "t2.micro"
+  associate_public_ip_address = true
+  user_data = "${data.template_file.db_provisioner_tmplt.rendered}"
+  tags {
+      Name = "${var.name}-provisioner"
+  }
+}
 
 # load the db template
 data "template_file" "db_1a_tmplt" {
