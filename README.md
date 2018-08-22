@@ -24,7 +24,7 @@ db.isMaster()
 rs.slaveOk()
 
 quit()
-
+```
 
 ## ELK
 
