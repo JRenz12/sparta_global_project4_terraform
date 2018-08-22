@@ -10,24 +10,7 @@ resource "aws_vpc" "main_vpc" {
 ## Declare the data source
 data "aws_availability_zones" "available" {}
 
-<<<<<<< HEAD
 
-    ## SUBNETS
-resource "aws_subnet" "app_subnet_1a" {
-  vpc_id     = "${var.vpc_id}"
-  cidr_block = "10.10.0.0/24"
-  availability_zone = "${data.aws_availability_zones.available.names[0]}"
-
-  tags {
-    Name = "subnet-app-project4"
-  }
-}
-
-resource "aws_subnet" "app_subnet_1b" {
-  vpc_id     = "${var.vpc_id}"
-  cidr_block = "10.10.1.0/24"
-  availability_zone = "${data.aws_availability_zones.available.names[1]}"
-=======
     ## SUBNETS
 resource "aws_subnet" "app_subnet_1a" {
   vpc_id     = "${var.vpc_id}"
@@ -52,20 +35,11 @@ resource "aws_subnet" "app_subnet_1c" {
   vpc_id     = "${var.vpc_id}"
   cidr_block = "10.10.2.0/24"
   availability_zone = "${data.aws_availability_zones.available.names[2]}"
->>>>>>> 328f1008947b2d371b06453d2e6c432ad02591d7
   tags {
     Name = "subnet-app-project4"
   }
 }
 
-resource "aws_subnet" "app_subnet_1c" {
-  vpc_id     = "${var.vpc_id}"
-  cidr_block = "10.10.2.0/24"
-  availability_zone = "${data.aws_availability_zones.available.names[2]}"
-  tags {
-    Name = "subnet-app-project4"
-  }
-}
 
     ## ROUTE TABLE
 resource "aws_route_table" "app_route_table" {
@@ -81,16 +55,12 @@ resource "aws_route_table" "app_route_table" {
   }
 }
 
-<<<<<<< HEAD
+
 resource "aws_route_table_association" "app_1a_association" {
-=======
-resource "aws_route_table_association" "app_route_association" {
->>>>>>> 328f1008947b2d371b06453d2e6c432ad02591d7
   subnet_id      = "${aws_subnet.app_subnet_1a.id}"
   route_table_id = "${aws_route_table.app_route_table.id}"
 }
 
-<<<<<<< HEAD
 resource "aws_route_table_association" "app_1b_association" {
   subnet_id      = "${aws_subnet.app_subnet_1b.id}"
   route_table_id = "${aws_route_table.app_route_table.id}"
@@ -102,8 +72,6 @@ resource "aws_route_table_association" "app_1c_association" {
 }
 
 
-=======
->>>>>>> 328f1008947b2d371b06453d2e6c432ad02591d7
     ## INTERNET GATEWAY
 resource "aws_internet_gateway" "app_internet_gateway" {
   vpc_id = "${var.vpc_id}"
@@ -112,12 +80,7 @@ resource "aws_internet_gateway" "app_internet_gateway" {
   }
 }
 
-<<<<<<< HEAD
-    ## SECURITY GROUP
-resource "aws_security_group" "app_security_group" {
-  name        = "app-sg"
-  description = "security group for app"
-=======
+
     ## SECURITY GROUPS
 resource "aws_security_group" "app_security_group" {
   name        = "app-sg"
@@ -142,14 +105,13 @@ resource "aws_security_group" "app_security_group" {
 resource "aws_security_group" "elb_security_group" {
   name        = "elb-sg"
   description = "security group for elb"
->>>>>>> 328f1008947b2d371b06453d2e6c432ad02591d7
   vpc_id      = "${var.vpc_id}"
 
   ingress {
     from_port   = 0
     to_port     = 0
     protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = ["$var.db_sg"]
     self = true
   }
   egress {
@@ -161,45 +123,19 @@ resource "aws_security_group" "elb_security_group" {
 }
 
 
-<<<<<<< HEAD
+
   ## APP LAUNCH TEMPLATE
-resource "aws_launch_template" "app_launch_template" {
-  name = "app_launch_template_mani"
-  image_id = "ami-0d5731d24b15cab8f"
-=======
-    ## INSTANCE
-
-
-  ## AUTO SCALING GROUP
 
 resource "aws_launch_template" "app_launch_template" {
   name_prefix = "Project4-launch"
   image_id = "ami-c2b8bfbb"
->>>>>>> 328f1008947b2d371b06453d2e6c432ad02591d7
   instance_type = "t2.micro"
   user_data = "${var.user_data}"
   network_interfaces {
     security_groups = ["${aws_security_group.app_security_group.id}"]
-<<<<<<< HEAD
-=======
   }
 }
 
-resource "aws_autoscaling_group" "app_auto_scaling" {
-  load_balancers = ["${aws_elb.elb_app.id}"]
-  desired_capacity = 3
-  max_size = 4
-  min_size = 3
-  vpc_zone_identifier = ["${aws_subnet.app_subnet_1a.id}", "${aws_subnet.app_subnet_1b.id}","${aws_subnet.app_subnet_1c.id}"]
-  launch_template = {
-    id = "${aws_launch_template.app_launch_template.id}"
-    version = "$$Latest"
->>>>>>> 328f1008947b2d371b06453d2e6c432ad02591d7
-  }
-
-}
-
-<<<<<<< HEAD
 
   ## AUTO SCALING GROUP
 resource "aws_autoscaling_group" "app_auto_scaling" {
@@ -227,25 +163,15 @@ resource "aws_autoscaling_group" "app_auto_scaling" {
 
     ## ELB
 resource "aws_elb" "elb_app" {
-  name = "elb-app-mani"
-  security_groups = ["${aws_security_group.app_security_group.id}"]
-=======
-    ## ELB
-resource "aws_elb" "elb_app" {
   name = "elb-app"
   security_groups = ["${aws_security_group.elb_security_group.id}"]
->>>>>>> 328f1008947b2d371b06453d2e6c432ad02591d7
   subnets = ["${aws_subnet.app_subnet_1a.id}", "${aws_subnet.app_subnet_1b.id}", "${aws_subnet.app_subnet_1c.id}"]
 
   health_check {
     healthy_threshold = 2
     unhealthy_threshold = 2
     timeout = 3
-<<<<<<< HEAD
     interval = 240
-=======
-    interval = 30
->>>>>>> 328f1008947b2d371b06453d2e6c432ad02591d7
     target = "HTTP:80/"
   }
     listener {

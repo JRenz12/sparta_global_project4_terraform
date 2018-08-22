@@ -7,7 +7,7 @@ output "db_1a_privateip" {
   value = "${aws_instance.db_1a.private_ip}"
 }
 
-output "db_1a_sg" {
+output "db_sg" {
   description = "db 1a instance id"
   value = "${aws_security_group.db_sg.id}"
 }

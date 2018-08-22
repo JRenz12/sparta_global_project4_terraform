@@ -24,7 +24,7 @@ module "app" {
   app_ami_id = "${module.app.app_ami_id}"
   cidr_block = "10.10.0.0/16"
   user_data = "${data.template_file.app_user_data.rendered}"
-  db_1a_sg = "${module.db.db_1a_sg}"
+  db_sg = "${module.db.db_sg}"
   elk_security_group = "${module.elk.elk_security_group}"
 }
 
@@ -37,7 +37,7 @@ module "db" {
   app_route_table = "${module.app.app_route_table}"
 #  cidr_block = ""
 #  user_data = ""
-#}
+}
 
 
 module "elk" {

@@ -20,3 +20,7 @@ variable "user_data" {
 variable "elk_security_group" {
   description = "the elk security group"
 }
+
+variable "db_sg" {
+  description = "the elk security group"
+}
