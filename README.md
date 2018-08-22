@@ -1,9 +1,9 @@
 # Project4 Terraform
 
 
-After terraform apply log in to mongo db using below mongo command and add the private IP of the primary DB instance. 
+After terraform apply log in to mongo db using below mongo command and add the public IP of the primary DB instance. 
 
-`mongo mongodb://{private ip} `
+`mongo mongodb://{public_ip}`
 
 Use rs.initiate command to add members to the replica set.
 
