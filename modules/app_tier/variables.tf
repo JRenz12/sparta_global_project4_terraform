@@ -17,14 +17,6 @@ variable "user_data" {
   description = "the vpc to launch the resource info"
 }
 
-variable "app_names" {
-  default = {
-    "0" = "app_1a"
-    "1" = "app_1b"
-    "2" = "app_1c"
-  }
-}
-
-variable "db_1a_sg" {
-  description = "db 1a"
+variable "elk_security_group" {
+  description = "the elk security group"
 }
