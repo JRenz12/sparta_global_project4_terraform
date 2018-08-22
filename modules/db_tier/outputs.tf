@@ -1,5 +1,5 @@
 output "db_ami_id" {
-  value = "ami-044ed85b76d004e7b"
+  value = "ami-0ce380b886769d3a8"
 }
 
 output "db_1a_privateip" {

@@ -6,7 +6,7 @@ provider "aws" {
 # ROUTE 53 RECORD TO APP
 resource "aws_route53_record" "engineering12" {
   zone_id = "Z3CCIZELFLJ3SC"
-  name    = "engineering12manvir.spartaglobal.education"
+  name    = "eng12.spartaglobal.education"
   type    = "CNAME"
   ttl     = "300"
   records = ["${module.app.elb_app}"]

@@ -103,7 +103,7 @@ resource "aws_security_group" "app_security_group" {
   ## APP LAUNCH TEMPLATE
 resource "aws_launch_template" "app_launch_template" {
   name = "app_launch_template-mani"
-  image_id = "ami-c2b8bfbb"
+  image_id = "ami-0d5731d24b15cab8f"
   instance_type = "t2.micro"
   user_data = "${var.user_data}"
   network_interfaces {
