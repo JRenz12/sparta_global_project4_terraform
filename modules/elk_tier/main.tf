@@ -79,3 +79,7 @@ resource "aws_instance" "elk_manvir" {
       Name = "elk-manvir-1a"
   }
 }
+
+resource "aws_eip" "ip" {
+  instance = "${aws_instance.elk_manvir.id}"
+}
