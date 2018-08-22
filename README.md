@@ -1,6 +1,5 @@
 # Project4 Terraform
 
-
 After terraform apply log in to mongo db using below mongo command and add the public IP of the primary DB instance. 
 
 `mongo mongodb://{public_ip}`
@@ -26,10 +25,16 @@ rs.slaveOk()
 quit()
 ```
 
+#### Link to application: 
+`eng12.spartaglobal.education`
+
+#### Link to view database: 
+`eng12.spartaglobal.education/posts`
+
 ## ELK
 
 **Elastisearch:** `eng12.spartaglobal.education:9200`
 
-**Log Stash:** `eng12.spartaglobal.education:5043`
+**LogStash:** `eng12.spartaglobal.education:5043`
 
 **Kimbana:** `eng12.spartaglobal.education:5601`
