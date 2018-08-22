@@ -23,6 +23,9 @@ Quit mongo shell.
 `quit()`
 
 ELK
-**Elastisearch: `eng12.spartaglobal.education:9200`
-**Log Stash: `eng12.spartaglobal.education:5043`
+
+**Elastisearch:** `eng12.spartaglobal.education:9200`
+
+**Log Stash:** `eng12.spartaglobal.education:5043`
+
 **Kimbana:** `eng12.spartaglobal.education:5601`
