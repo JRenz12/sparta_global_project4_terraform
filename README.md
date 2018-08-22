@@ -1,4 +1,4 @@
-#Project4 Terraform
+# Project4 Terraform
 
 
 After terraform apply log in to mongo db using below mongo command and add the private IP of the primary DB instance. 
