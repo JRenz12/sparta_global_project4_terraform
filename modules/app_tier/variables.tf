@@ -22,5 +22,5 @@ variable "elk_security_group" {
 }
 
 variable "db_sg" {
-  description = "the elk security group"
+  description = "the db security group"
 }

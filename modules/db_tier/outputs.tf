@@ -8,6 +8,6 @@ output "db_1a_privateip" {
 }
 
 output "db_sg" {
-  description = "db 1a instance id"
+  description = "db sg"
   value = "${aws_security_group.db_sg.id}"
 }
