@@ -3,9 +3,6 @@ provider "aws" {
 }
 
 
-
-
-
 # create a subnet
 resource "aws_subnet" "db_1a" {
   vpc_id = "${var.vpc_id}"
@@ -76,7 +73,6 @@ resource "aws_security_group" "db_sg" {
 }
 
 
-
 # launch an instance
 resource "aws_instance" "db_1a" {
   ami           = "${var.db_ami_id}"
@@ -114,28 +110,7 @@ resource "aws_instance" "db_1c" {
   }
 }
 
-# launch an instance
-resource "aws_instance" "db_provisioner" {
-  ami           = "${var.db_ami_id}"
-  subnet_id     = "${aws_subnet.db_1a.id}"
-  private_ip = "10.10.4.8"
-  security_groups = ["${aws_security_group.db_sg.id}"]
-  instance_type = "t2.micro"
-  associate_public_ip_address = true
-  user_data = "${data.template_file.db_provisioner_tmplt.rendered}"
-  tags {
-      Name = "${var.name}-provisioner"
-  }
-}
-
 # load the db template
 data "template_file" "db_1a_tmplt" {
    template = "${file("./scripts/app/db.sh.tpl")}"
-}
-
-data "template_file" "db_provisioner_tmplt" {
-   template = "${file("./scripts/app/db_provisioner_tmplt.sh.tpl")}"
-   vars {
-     db1 = "${aws_instance.db_1a.public_dns}"
-   }
 }
