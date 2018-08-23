@@ -52,9 +52,6 @@ sudo apt-get update
 sudo apt-get install filebeat
 sudo service filebeat restart
 sudo update-rc.d filebeat defaults 95 10
-
-sudo service filebeat restart
-sudo update-rc.d filebeat defaults 95 10
 sudo service logstash restart
 sudo service kibana restart
 

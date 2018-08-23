@@ -83,16 +83,6 @@ resource "aws_instance" "db_1a" {
   security_groups = ["${aws_security_group.db_sg.id}"]
   instance_type = "t2.micro"
   associate_public_ip_address = true
-  provisioner "file" {
-    source      = "scripts/db/intiate.js"
-    destination = "."
-  }
-  tags {
-      Name = "${var.name}-1a"
-  }
-  connection {
-    agent = true
-  }
 }
 
 resource "aws_instance" "db_1b" {

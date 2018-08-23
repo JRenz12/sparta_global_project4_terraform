@@ -104,9 +104,9 @@ resource "aws_security_group" "elk_security_group" {
 # load the db template
 data "template_file" "elk_tmplt" {
    template = "${file("./scripts/app/elk.sh.tpl")}"
-   #vars {
-   #public_ip = "${aws_instance.db_1a.public_ip}"
-   #}
+   vars {
+   public_ip = "${aws_instance.db_1a.public_ip}"
+   }
 }
 
 resource "aws_instance" "elk_manvir" {
@@ -136,6 +136,7 @@ resource "aws_instance" "elk_manvir" {
   }
   connection {
     agent = true
+    user = "ubuntu"
   }
 }
 
