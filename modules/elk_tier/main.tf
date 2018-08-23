@@ -5,9 +5,37 @@ resource "aws_vpc" "elk_vpc" {
   }
 }
 
+
+## ROUTE TABLE
+resource "aws_route_table" "elk_route_table" {
+vpc_id = "${aws_vpc.elk_vpc.id}"
+  route {
+    cidr_block = "0.0.0.0/0"
+    gateway_id = "${aws_internet_gateway.elk_internet_gateway.id}"
+  }
+  tags {
+    Name = "app-route-table"
+  }
+}
+
+
+resource "aws_route_table_association" "elk_association" {
+  subnet_id      = "${aws_subnet.elk_subnet.id}"
+  route_table_id = "${aws_route_table.elk_route_table.id}"
+}
+
+
+resource "aws_internet_gateway" "elk_internet_gateway" {
+  vpc_id = "${aws_vpc.elk_vpc.id}"
+  tags {
+    Name = "main"
+  }
+}
+
+
 resource "aws_vpc_peering_connection" "elk_peering" {
-  peer_vpc_id   = "${aws_vpc.elk_vpc.id}"
-  vpc_id        = "${var.vpc_id}"
+  peer_vpc_id   = "${var.vpc_id}"
+  vpc_id        = "${aws_vpc.elk_vpc.id}"
   auto_accept   = true
 }
 
@@ -27,37 +55,11 @@ resource "aws_security_group" "elk_security_group" {
 
   # elasticsearch port
   ingress {
-    from_port   = 9200
-    to_port     = 9200
-    protocol    = "tcp"
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
   }
-
-  # logstash port
-  ingress {
-    from_port   = 5043
-    to_port     = 5044
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  # kibana ports
-  ingress {
-    from_port   = 5601
-    to_port     = 5601
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  # ssh
-  ingress {
-    from_port   = 22
-    to_port     = 22
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  # outbound
   egress {
     from_port   = 0
     to_port     = 0
@@ -65,19 +67,64 @@ resource "aws_security_group" "elk_security_group" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
+  # logstash port
+  #ingress {
+  #  from_port   = 5043
+  #  to_port     = 5044
+  #  protocol    = "tcp"
+  #  cidr_blocks = ["0.0.0.0/0"]
+  #}
+
+  # kibana ports
+  #ingress {
+  #  from_port   = 5601
+  #  to_port     = 5601
+  #  protocol    = "tcp"
+  #  cidr_blocks = ["0.0.0.0/0"]
+  #}
+
+  # ssh
+  #ingress {
+  #  from_port   = 22
+  #  to_port     = 22
+  #  protocol    = "tcp"
+  #  cidr_blocks = ["0.0.0.0/0"]
+  #}
+
+  # outbound
+  #egress {
+  #  from_port   = 0
+  #  to_port     = 0
+  #  protocol    = "-1"
+  #  cidr_blocks = ["0.0.0.0/0"]
+  #}
+
 }
 
+# load the db template
+data "template_file" "elk_tmplt" {
+   template = "${file("./scripts/app/elk.sh.tpl")}"
+   #vars {
+   #public_ip = "${aws_instance.db_1a.public_ip}"
+   #}
+}
 
 resource "aws_instance" "elk_manvir" {
-  ami           = "ami-031831702eaf214b0"
+  ami           = "ami-08b85955294047cd7"
   subnet_id     = "${aws_subnet.elk_subnet.id}"
-  private_ip = "10.10.4.7"
+  private_ip = "10.11.0.7"
   security_groups = ["${aws_security_group.elk_security_group.id}"]
   instance_type = "t2.micro"
   associate_public_ip_address = true
+  user_data = "${data.template_file.elk_tmplt.rendered}"
   tags {
       Name = "elk-manvir-1a"
   }
+    connection {
+      type        = "ssh"
+      user        = "ubuntu"
+      private_key = "${var.private_key}"
+    }
 }
 
 resource "aws_eip" "ip" {

@@ -12,3 +12,7 @@ variable "cidr_block" {
 variable "vpc_id" {
   description = "vpc id for main vpc"
 }
+
+variable "app_route_table" {
+  description = "app route table"
+}

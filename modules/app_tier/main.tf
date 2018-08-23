@@ -88,10 +88,12 @@ resource "aws_security_group" "app_security_group" {
   vpc_id      = "${var.vpc_id}"
 
   ingress {
-    from_port   = 80
-    to_port     = 80
-    protocol    = "tcp"
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["10.10.4.0/24","10.10.5.0/24","10.10.6.0/24"]
     security_groups = ["${aws_security_group.elb_security_group.id}","${var.elk_security_group}"]
+    self = true
   }
   egress {
     from_port = 0
@@ -100,6 +102,7 @@ resource "aws_security_group" "app_security_group" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 }
+
 
 
 resource "aws_security_group" "elb_security_group" {
@@ -119,6 +122,7 @@ resource "aws_security_group" "elb_security_group" {
     to_port = 0
     protocol = "-1"
     cidr_blocks = ["0.0.0.0/0"]
+    self = true
   }
 }
 
