@@ -128,7 +128,7 @@ resource "aws_security_group" "elb_security_group" {
 
 
 data "template_file" "filebeats_server_app" {
-   template = "${file("./scripts/app/filebeats.sh.tpl")}"
+   template = "${file("./scripts/app/filebeats_asg.sh.tpl")}"
 }
 
 

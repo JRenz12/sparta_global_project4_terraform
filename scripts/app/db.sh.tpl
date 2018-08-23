@@ -1,7 +1,7 @@
 #!/bin/bash
 
-mongo mongodb://${public_ip}/rs0 --eval 'rs.initiate()'
-mongo mongodb://${public_ip}/rs0 --eval 'rs.add( "10.10.5.7:27017" )'
-mongo mongodb://${public_ip}/rs0 --eval 'rs.add( "10.10.6.7:27017" )'
-mongo mongodb://${public_ip}/rs0 --eval 'rs.slaveOk()'
-mongo mongodb://${public_ip}/rs0 --eval 'db.isMaster()'
+mongo 
+rs.initiate({ _id: "rs0", members: [ { _id: 0, host : "10.10.4.7" }, { _id: 1, host : "10.10.5.7" }, { _id: 2, host : "10.10.6.7" } ] })
+db.isMaster()
+rs.slaveOk()
+quit()
