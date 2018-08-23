@@ -83,6 +83,13 @@ resource "aws_instance" "db_1a" {
   security_groups = ["${aws_security_group.db_sg.id}"]
   instance_type = "t2.micro"
   associate_public_ip_address = true
+  provisioner "local-exec" {
+    command = "mongo mongodb://'${aws_instance.db_1a.public_ip}'/rs0 --eval 'rs.initiate()'"
+    command = "mongo mongodb://'${aws_instance.db_1a.public_ip}'/rs0 --eval 'rs.add( '10.10.5.7:27017' )'"
+    command = "mongo mongodb://'${aws_instance.db_1a.public_ip}'/rs0 --eval 'rs.add( '10.10.6.7:27017' )'"
+    command = "mongo mongodb://'${aws_instance.db_1a.public_ip}'/rs0 --eval 'rs.slaveOk()'"
+    command = "mongo mongodb://'${aws_instance.db_1a.public_ip}'/rs0 --eval 'db.isMaster()'"
+  }
 }
 
 resource "aws_instance" "db_1b" {

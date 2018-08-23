@@ -12,6 +12,15 @@ resource "aws_route53_record" "engineering12" {
   records = ["${module.app.elb_app}"]
 }
 
+# ROUTE 53 RECORD TO APP
+resource "aws_route53_record" "kibana" {
+  zone_id = "Z3CCIZELFLJ3SC"
+  name    = "kibana.spartaglobal.education"
+  type    = "CNAME"
+  ttl     = "300"
+  records = ["${module.elk.kibana_url}:5601"]
+}
+
 ## APP TEMPLATE
 data "template_file" "app_user_data" {
 template = "${file("${path.cwd}/template/app/user_data.sh.tpl")}"
