@@ -43,7 +43,7 @@ module "db" {
 module "elk" {
   source = "modules/elk_tier"
   cidr_block = "10.11.0.0/16"
-  key = "DevOpsStudents.pem"
+  key = "DevOpsStudents"
   private_key = "${file("~/.ssh/DevOpsStudents.pem")}"
   vpc_id = "${module.app.vpc_id}"
   app_route_table = "${module.app.app_route_table}"

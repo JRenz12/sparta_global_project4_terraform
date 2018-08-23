@@ -1,6 +1,6 @@
 # Project4 Terraform
 
-After terraform apply log in to mongo db using below mongo command and add the public IP of the primary DB instance. 
+After terraform apply open a terminal window and execute the follow commands.
 
 `mongo mongodb://{public_ip}`
 
@@ -16,19 +16,19 @@ Set read permissions for the secondaries set to ok.
 Quit mongo shell.
 
 ```
-rs.initiate({ _id: "rs0", members: [ { _id: 0, host : "10.10.4.7" }, { _id: 1, host : "10.10.5.7" }, { _id: 2, host : "10.10.6.7" } ] })
+#!/bin/mongo
+mongo mongodb://${public_ip}/rs0 --eval "rs.initiate()"
+mongo mongodb://${public_ip}/rs0 --eval "rs.add('10.10.5.7')"
+mongo mongodb://${public_ip}/rs0 --eval "rs.add('10.10.6.7')"
+mongo mongodb://${public_ip}/rs0 --eval "db.isMaster()"
+mongo mongodb://${public_ip}/rs0 --eval "rs.slaveOk()"
 
-db.isMaster()
-
-rs.slaveOk()
-
-quit()
 ```
 
-#### Link to application: 
+#### Link to application:
 `eng12.spartaglobal.education`
 
-#### Link to view database: 
+#### Link to view database:
 `eng12.spartaglobal.education/posts`
 
 ## ELK

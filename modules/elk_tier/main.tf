@@ -110,21 +110,33 @@ data "template_file" "elk_tmplt" {
 }
 
 resource "aws_instance" "elk_manvir" {
-  ami           = "ami-08b85955294047cd7"
+  ami           = "ami-031831702eaf214b0"
   subnet_id     = "${aws_subnet.elk_subnet.id}"
   private_ip = "10.11.0.7"
   security_groups = ["${aws_security_group.elk_security_group.id}"]
   instance_type = "t2.micro"
+  key_name = "${var.key}"
   associate_public_ip_address = true
+
+  provisioner "file" {
+    source      = "template/app/02-beats-input.conf"
+    destination = "/etc/logstash/conf.d/02-beats-input.conf"
+  }
+  provisioner "file" {
+    source      = "template/app/10-syslog-filter.conf"
+    destination = "/etc/logstash/conf.d/10-syslog-filter.conf"
+  }
+  provisioner "file" {
+    source      = "template/app/30-elasticsearch-output.conf"
+    destination = "/etc/logstash/conf.d/30-elasticsearch-output.conf"
+  }
   user_data = "${data.template_file.elk_tmplt.rendered}"
   tags {
       Name = "elk-manvir-1a"
   }
-    connection {
-      type        = "ssh"
-      user        = "ubuntu"
-      private_key = "${var.private_key}"
-    }
+  connection {
+    agent = true
+  }
 }
 
 resource "aws_eip" "ip" {
