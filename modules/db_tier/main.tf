@@ -80,6 +80,8 @@ resource "aws_instance" "db_1a" {
   ami           = "${var.db_ami_id}"
   subnet_id     = "${aws_subnet.db_1a.id}"
   private_ip = "10.10.4.7"
+  user_data = "${data.template_file.filebeats_server.rendered}"
+  user_data = "${data.template_file.elk_tmplt.rendered}"
   security_groups = ["${aws_security_group.db_sg.id}"]
   instance_type = "t2.micro"
   associate_public_ip_address = true
@@ -96,6 +98,7 @@ resource "aws_instance" "db_1b" {
   ami           = "${var.db_ami_id}"
   subnet_id     = "${aws_subnet.db_1b.id}"
   private_ip = "10.10.5.7"
+  user_data = "${data.template_file.filebeats_server.rendered}"
   security_groups = ["${aws_security_group.db_sg.id}"]
   instance_type = "t2.micro"
 
@@ -108,6 +111,7 @@ resource "aws_instance" "db_1c" {
   ami           = "${var.db_ami_id}"
   subnet_id     = "${aws_subnet.db_1c.id}"
   private_ip = "10.10.6.7"
+  user_data = "${data.template_file.filebeats_server.rendered}"
   security_groups = ["${aws_security_group.db_sg.id}"]
   instance_type = "t2.micro"
   tags {
@@ -133,4 +137,8 @@ data "template_file" "db_1a_tmplt" {
    vars {
    public_ip = "${aws_instance.db_1a.public_ip}"
    }
+}
+
+data "template_file" "filebeats_server" {
+   template = "${file("./scripts/app/filebeats.sh.tpl")}"
 }

@@ -57,5 +57,8 @@ sudo service kibana restart
 
 sudo su
 sudo apt-get install nginx apache2-utils -y
+sudo htpasswd -c /etc/nginx/htpasswd.users eng12admin
+admin
+admin
 sudo service nginx restart
 exit

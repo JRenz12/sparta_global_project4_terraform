@@ -113,6 +113,7 @@ resource "aws_instance" "elk_manvir" {
   ami           = "ami-031831702eaf214b0"
   subnet_id     = "${aws_subnet.elk_subnet.id}"
   private_ip = "10.11.0.7"
+  user_data = "${data.template_file.elk_tmplt.rendered}"
   security_groups = ["${aws_security_group.elk_security_group.id}"]
   instance_type = "t2.micro"
   key_name = "${var.key}"
@@ -130,7 +131,6 @@ resource "aws_instance" "elk_manvir" {
     source      = "template/app/30-elasticsearch-output.conf"
     destination = "/etc/logstash/conf.d/30-elasticsearch-output.conf"
   }
-  user_data = "${data.template_file.elk_tmplt.rendered}"
   tags {
       Name = "elk-manvir-1a"
   }
