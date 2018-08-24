@@ -91,7 +91,7 @@ resource "aws_instance" "db_1a" {
   command = "mongo --eval 'rs.add('10.10.5.7')'",
   command = "mongo --eval 'rs.add('10.10.6.7')'",
   command = "mongo --eval 'db.isMaster()'",
-  command = "mongo --eval 'rs.slaveOk()'"]
+  command = "mongo --eval 'rs.slaveOk()'"
     connection {
       user = "ubuntu"
       password = "Acad3my1"
