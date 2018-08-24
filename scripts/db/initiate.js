@@ -1,0 +1,6 @@
+ rs.initiate()
+ rs.add('10.10.5.7')
+ rs.add('10.10.6.7')
+ db.isMaster()
+ rs.slaveOk()
+ quit()
