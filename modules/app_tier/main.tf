@@ -139,7 +139,6 @@ resource "aws_launch_template" "app_launch_template" {
   image_id = "ami-c2b8bfbb"
   instance_type = "t2.micro"
   user_data = "${var.user_data}"
-  user_data = "${data.template_file.filebeats_server_app.rendered}"
   network_interfaces {
     security_groups = ["${aws_security_group.app_security_group.id}"]
   }

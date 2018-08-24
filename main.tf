@@ -18,7 +18,7 @@ resource "aws_route53_record" "kibana" {
   name    = "kibana.spartaglobal.education"
   type    = "CNAME"
   ttl     = "300"
-  records = ["${module.elk.kibana_url}:5601"]
+  records = ["${module.elk.kibana_url}"]
 }
 
 ## APP TEMPLATE
@@ -35,6 +35,8 @@ module "app" {
   user_data = "${data.template_file.app_user_data.rendered}"
   db_sg = "${module.db.db_sg}"
   elk_security_group = "${module.elk.elk_security_group}"
+  key = "DevOpsStudents"
+  private_key = "${file("~/.ssh/DevOpsStudents.pem")}"
 }
 
 module "db" {
@@ -44,6 +46,8 @@ module "db" {
   app_security_group = "${module.app.app_security_group}"
   db_ami_id = "${module.db.db_ami_id}"
   app_route_table = "${module.app.app_route_table}"
+  key = "DevOpsStudents"
+  private_key = "${file("~/.ssh/DevOpsStudents.pem")}"
 #  cidr_block = ""
 #  user_data = ""
 }

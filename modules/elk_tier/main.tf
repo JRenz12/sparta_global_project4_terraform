@@ -59,12 +59,14 @@ resource "aws_security_group" "elk_security_group" {
     to_port     = 0
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
+    self = true
   }
   egress {
     from_port   = 0
     to_port     = 0
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
+    self = true
   }
 
   # logstash port
@@ -113,31 +115,30 @@ resource "aws_instance" "elk_manvir" {
   ami           = "ami-031831702eaf214b0"
   subnet_id     = "${aws_subnet.elk_subnet.id}"
   private_ip = "10.11.0.7"
-  user_data = "${data.template_file.elk_tmplt.rendered}"
   security_groups = ["${aws_security_group.elk_security_group.id}"]
   instance_type = "t2.micro"
   key_name = "${var.key}"
   associate_public_ip_address = true
+  user_data = "${data.template_file.elk_tmplt.rendered}"
+#  provisioner "local-exec" {
+    #command = "export LC_ALL=C"
+    #command = "sudo mkdir -p /etc/logstash/conf.d/"
+    #command = "sudo echo 'input {beats {port => 5044}}' >/etc/logstash/conf.d/02-beats-input.conf"
+    #command = "sudo echo 'filter {if [type] == "syslog" {grok {match => { "message" => "%{SYSLOGTIMESTAMP:syslog_timestamp} %{SYSLOGHOST:syslog_hostname} %{DATA:syslog_program}(?:\[%{POSINT:syslog_pid}\])?: %{GREEDYDATA:syslog_message}" }add_field => [ "received_at", "%{@timestamp}" ]add_field => [ "received_from", "%{host}" ]}syslog_pri { }date {match => [ "syslog_timestamp", "MMM  d HH:mm:ss", "MMM dd HH:mm:ss" ]}}}
+#' > /etc/logstash/conf.d/10-syslog-filter.conf"
+#    command = "sudo echo 'output {elasticsearch {hosts => ["localhost:9200"]sniffing => truemanage_template => falseindex => "%{[@metadata][beat]}-%{+YYYY.MM.dd}"document_type => "%{[@metadata][type]}"}}
+#' > /etc/logstash/conf.d/30-elasticsearch-output.conf"
+#    connection {
+#      user = "ubuntu"
+#      password = "Acad3my1"
+#      private_key = "${var.private_key}"
+#    }
+#  }
 
-  provisioner "file" {
-    source      = "template/app/02-beats-input.conf"
-    destination = "/etc/logstash/conf.d/02-beats-input.conf"
-  }
-  provisioner "file" {
-    source      = "template/app/10-syslog-filter.conf"
-    destination = "/etc/logstash/conf.d/10-syslog-filter.conf"
-  }
-  provisioner "file" {
-    source      = "template/app/30-elasticsearch-output.conf"
-    destination = "/etc/logstash/conf.d/30-elasticsearch-output.conf"
-  }
   tags {
       Name = "elk-manvir-1a"
   }
-  connection {
-    agent = true
-    user = "ubuntu"
-  }
+
 }
 
 resource "aws_eip" "ip" {

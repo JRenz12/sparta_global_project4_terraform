@@ -83,13 +83,23 @@ resource "aws_instance" "db_1a" {
   user_data = "${data.template_file.filebeats_server.rendered}"
   security_groups = ["${aws_security_group.db_sg.id}"]
   instance_type = "t2.micro"
+  key_name = "${var.key}"
   associate_public_ip_address = true
   provisioner "local-exec" {
-  mongo
-  rs.initiate({ _id: "rs0", members: [ { _id: 0, host : "10.10.4.7" }, { _id: 1, host : "10.10.5.7" }, { _id: 2, host : "10.10.6.7" } ] })
-  db.isMaster()
-  rs.slaveOk()
-  quit()
+  command = "export LC_ALL=C",
+  command = "mongo --eval 'rs.initiate()'",
+  command = "mongo --eval 'rs.add('10.10.5.7')'",
+  command = "mongo --eval 'rs.add('10.10.6.7')'",
+  command = "mongo --eval 'db.isMaster()'",
+  command = "mongo --eval 'rs.slaveOk()'"]
+    connection {
+      user = "ubuntu"
+      password = "Acad3my1"
+      private_key = "${var.private_key}"
+    }
+  }
+  tags {
+      Name = "${var.name}-1a"
   }
 }
 
@@ -124,14 +134,14 @@ resource "aws_instance" "db_provisioner" {
   private_ip = "10.10.4.8"
   security_groups = ["${aws_security_group.db_sg.id}"]
   instance_type = "t2.micro"
-  user_data = "${data.template_file.db_1a_tmplt.rendered}"
+  user_data = "${data.template_file.db_provisioner_tmplt.rendered}"
   tags {
       Name = "${var.name}-provisioner"
   }
 }
 
 # load the db template
-data "template_file" "db_1a_tmplt" {
+data "template_file" "db_provisioner_tmplt" {
    template = "${file("./scripts/app/db.sh.tpl")}"
    vars {
    public_ip = "${aws_instance.db_1a.public_ip}"

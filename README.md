@@ -33,8 +33,8 @@ mongo mongodb://${public_ip}/rs0 --eval "rs.slaveOk()"
 
 ## ELK
 
-**Elastisearch:** `eng12.spartaglobal.education:9200`
+**Elastisearch:** `kibana.spartaglobal.education`
 
-**LogStash:** `eng12.spartaglobal.education:5043`
+**LogStash:** `kibana.spartaglobal.education`
 
-**Kimbana:** `eng12.spartaglobal.education:5601`
+**Kimbana:** `kibana.spartaglobal.education`
